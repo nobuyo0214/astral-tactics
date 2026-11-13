@@ -45,6 +45,7 @@ export interface Skill {
   duration: number;
 }
 export interface Placement extends Cell {
+  starLevel?: import("../run/types").UnitStarLevel;
   characterId: string;
   id: string;
   team: Team;

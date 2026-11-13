@@ -634,3 +634,369 @@ select {
     transition: none !important;
   }
 }
+/* P2: economy and owned roster panels */
+.run-top {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 1210px;
+  margin: 0 auto 22px;
+  padding: 16px 24px;
+}
+.run-top > div {
+  border-right: 1px solid #39415a;
+  padding-right: 12px;
+  min-width: 0;
+}
+.run-top > div:last-child {
+  border: 0;
+}
+.run-top small {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.run-top strong {
+  display: block;
+  font-size: 21px;
+  font-weight: 500;
+  margin-top: 6px;
+  white-space: nowrap;
+}
+.run-top em {
+  font-size: 10px;
+  color: #8b9bb9;
+  font-style: normal;
+  margin-left: 8px;
+}
+.run-top progress {
+  height: 4px;
+  width: 100%;
+  accent-color: #bda3ed;
+}
+.gold {
+  color: #edce89;
+}
+.hp {
+  color: #93d9c1;
+}
+.star {
+  color: #edce89 !important;
+  letter-spacing: 2px;
+}
+.text-button {
+  text-align: left;
+  border: 0;
+  background: none;
+  color: #e3c794;
+  font-size: 20px;
+  padding: 0;
+}
+.run-left {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+.run-left h2 {
+  margin: 10px 0;
+}
+.run-left h3 {
+  margin-top: 20px;
+}
+.run-left p {
+  font-size: 12px;
+  margin-top: 12px;
+}
+.run-left small {
+  line-height: 1.7;
+}
+.run-actions {
+  max-width: 1210px;
+  margin: 18px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.run-actions p {
+  font-size: 12px;
+}
+.run-actions > div {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.team-building {
+  max-width: 1210px;
+  margin: auto;
+  display: grid;
+  gap: 18px;
+}
+.team-building .panel {
+  padding: 20px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.section-title h2 {
+  margin-top: 5px;
+  font-size: 17px;
+}
+.section-title > div:last-child {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.section-title > div:first-child {
+  display: block;
+}
+#shop-controls button {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+#shop-controls .active {
+  border-color: #d1b27d;
+  color: #f0d49b;
+  background: #40384c;
+}
+.bench-grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 10px;
+}
+.bench-slot {
+  height: 98px;
+  padding: 8px 2px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-style: dashed;
+  background: #151e32;
+  min-width: 0;
+}
+.bench-slot[data-owned] {
+  border-style: solid;
+}
+.bench-slot.selected {
+  border-color: #ebd399;
+  background: #35344b;
+}
+.bench-slot > span {
+  font-size: 25px;
+}
+.bench-slot strong {
+  font-weight: 500;
+  font-size: 11px;
+}
+.bench-slot small {
+  font-size: 10px;
+}
+.bench-slot .slot-number {
+  position: absolute;
+  left: 6px;
+  top: 5px;
+  font-size: 9px;
+  color: #65738e;
+}
+.bench-slot .empty-slot {
+  color: #414e6a;
+  font-size: 20px;
+}
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+.shop-card {
+  background: #151d31;
+  border: 1px solid #44445c;
+  border-radius: 7px;
+  overflow: hidden;
+  padding: 14px;
+  min-width: 0;
+}
+.shop-sigil {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 32px;
+  margin-bottom: 14px;
+}
+.shop-sigil span {
+  font-size: 12px;
+  color: #e7c784;
+  border: 1px solid #5a4d3a;
+  border-radius: 20px;
+  padding: 4px 9px;
+}
+.shop-card h3 {
+  font-size: 15px;
+  color: #e8e7ef;
+}
+.shop-card p {
+  font-size: 11px;
+  margin: 6px 0;
+}
+.shop-card small {
+  display: block;
+  font-size: 10px;
+}
+.shop-card button {
+  width: 100%;
+  font-size: 12px;
+  margin-top: 15px;
+  padding: 8px;
+  background: #2f3148;
+}
+.shop-card.sold {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 198px;
+  opacity: 0.5;
+}
+.sold-mark {
+  font-size: 44px;
+  color: #817794;
+}
+.save-status {
+  max-width: 1210px;
+  margin: 14px auto 25px;
+  font-size: 11px;
+  color: #7f91ad;
+}
+.menu-save {
+  font-size: 11px;
+  margin-top: 12px;
+}
+.run-arena #run-info {
+  min-height: 265px;
+}
+.run-arena #run-info h2 {
+  margin: 10px 0 5px;
+}
+.run-arena #run-info p {
+  font-size: 12px;
+}
+.run-arena #run-info small {
+  font-size: 10px;
+  line-height: 1.7;
+}
+.run-arena #run-info h3 {
+  margin-top: 12px;
+}
+#run-log {
+  font-size: 11px;
+  margin-top: 12px;
+}
+#run-odds p {
+  font-size: 11px;
+  margin-top: 10px;
+}
+#run-odds h3 {
+  margin-top: 8px;
+}
+.gold-change {
+  animation: gold-change 0.65s ease-out;
+}
+.upgrade-flash {
+  animation: upgrade-flash 1.2s ease-out;
+  color: #f3d088 !important;
+}
+@keyframes gold-change {
+  0% {
+    transform: translateY(-5px);
+    filter: brightness(2);
+  }
+  100% {
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+}
+@keyframes upgrade-flash {
+  0% {
+    box-shadow: 0 0 35px #c5a0fc;
+    filter: brightness(1.7);
+  }
+  100% {
+    box-shadow: 0 0 0 transparent;
+    filter: brightness(1);
+  }
+}
+@media (max-width: 1150px) {
+  .run-top {
+    padding: 14px;
+  }
+  .run-actions {
+    align-items: flex-start;
+  }
+  .shop-card {
+    padding: 10px;
+  }
+  .shop-sigil span {
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+  .bench-grid {
+    gap: 6px;
+  }
+}
+@media (max-width: 800px) {
+  .run-top {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .run-left {
+    display: none;
+  }
+  .run-arena .right-rail {
+    grid-template-columns: 1fr 1fr;
+  }
+  .run-actions {
+    flex-direction: column;
+  }
+  .bench-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .shop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .section-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .text-button {
+    font-size: 15px;
+  }
+  .run-actions > div {
+    flex-wrap: wrap;
+  }
+  .run-top strong {
+    font-size: 18px;
+  }
+}
+
+#run-board {
+  aspect-ratio: 520/568;
+  width: 100%;
+  line-height: 0;
+}
+#run-board canvas {
+  display: block !important;
+  max-width: 100%;
+  touch-action: none;
+}
+.run-arena .board-panel {
+  align-self: start;
+}
+
+.battle-paused * {
+  animation-play-state: paused !important;
+}

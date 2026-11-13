@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import type { Battle } from "../core/battle";
 import type { Cell, Placement, Unit } from "../core/types";
-import { characterById } from "../data/characters";
+import { effectiveCharacter } from "../core/attributes";
 export interface BoardBridge {
   placements: () => Placement[];
   battle: () => Battle | null;
@@ -10,8 +10,9 @@ export interface BoardBridge {
   quality: () => boolean;
   click: (cell: Cell, id?: string) => void;
   drop: (cell: Cell, id: string) => void;
-  inspect: (id: string) => void;
+  inspect: (id: string, unitId?: string) => void;
   bench: (id: string) => void;
+  outsideDrop?: (id: string, clientX: number, clientY: number) => boolean;
   update: (delta: number) => void;
 }
 export const TILE = 66,
@@ -25,6 +26,7 @@ export function screenCell(x: number, y: number): Cell {
 export class BoardScene extends Phaser.Scene {
   private ink!: Phaser.GameObjects.Graphics;
   private labels: Phaser.GameObjects.Text[] = [];
+  private labelCursor = 0;
   private hover: Cell | null = null;
   private down: { x: number; y: number; id?: string } | null = null;
   constructor(private bridge: BoardBridge) {
@@ -42,7 +44,7 @@ export class BoardScene extends Phaser.Scene {
           (u) => u.x === c.x && u.y === c.y && (!("hp" in u) || u.hp > 0),
         );
       if (p.rightButtonDown()) {
-        if (u) this.bridge.inspect(u.characterId);
+        if (u) this.bridge.inspect(u.characterId, u.id);
         return;
       }
       this.down = { x: p.x, y: p.y, id: u?.id };
@@ -53,9 +55,20 @@ export class BoardScene extends Phaser.Scene {
       this.down = null;
       const c = screenCell(p.x, p.y);
       if (d.id && Math.hypot(p.x - d.x, p.y - d.y) > 10) {
-        if (c.y >= 8 || c.x < 0 || c.x >= 7) this.bridge.bench(d.id);
-        else this.bridge.drop(c, d.id);
+        if (c.y >= 8 || c.x < 0 || c.x >= 7) {
+          const e = p.event as MouseEvent;
+          if (!this.bridge.outsideDrop?.(d.id, e.clientX, e.clientY))
+            this.bridge.bench(d.id);
+        } else this.bridge.drop(c, d.id);
       } else this.bridge.click(c, d.id);
+    });
+    this.input.on("pointerupoutside", (p: Phaser.Input.Pointer) => {
+      const d = this.down;
+      this.down = null;
+      if (!d?.id) return;
+      const e = p.event as MouseEvent;
+      if (!this.bridge.outsideDrop?.(d.id, e.clientX, e.clientY))
+        this.bridge.bench(d.id);
     });
   }
   private current(): (Placement | Unit)[] {
@@ -68,22 +81,29 @@ export class BoardScene extends Phaser.Scene {
     size = 12,
     color = "#e7e8ff",
   ) {
-    const t = this.add
-      .text(x, y, value, {
-        fontFamily: '"Microsoft JhengHei", sans-serif',
-        fontSize: size,
-        color,
-      })
-      .setOrigin(0.5);
-    this.labels.push(t);
+    // Reuse a bounded label pool rather than allocate/destroy text each frame.
+    let t = this.labels[this.labelCursor++];
+    if (!t) {
+      t = this.add
+        .text(0, 0, "", { fontFamily: '"Microsoft JhengHei", sans-serif' })
+        .setOrigin(0.5);
+      this.labels.push(t);
+    }
+    t.setPosition(x, y)
+      .setText(value)
+      .setFontSize(size)
+      .setColor(color)
+      .setAlpha(1)
+      .setVisible(true);
   }
+
   update(_time: number, delta: number) {
     this.bridge.update(delta / 1000);
     if (!this.ink) return;
     const g = this.ink;
     g.clear();
-    this.labels.forEach((t) => t.destroy());
-    this.labels = [];
+    this.labels.forEach((t) => t.setVisible(false));
+    this.labelCursor = 0;
     for (let y = 0; y < 8; y++)
       for (let x = 0; x < 7; x++) {
         const px = OX + x * TILE,
@@ -108,7 +128,7 @@ export class BoardScene extends Phaser.Scene {
     g.lineBetween(OX, OY + 4 * TILE, OX + 7 * TILE, OY + 4 * TILE);
     const b = this.bridge.battle();
     for (const u of this.current()) {
-      const data = characterById[u.characterId],
+      const data = effectiveCharacter(u.characterId, u.starLevel ?? 1),
         live = "hp" in u ? u : null;
       let alpha = 1;
       if (live && live.hp <= 0) {
@@ -139,9 +159,9 @@ export class BoardScene extends Phaser.Scene {
         22,
         `#${data.color.toString(16).padStart(6, "0")}`,
       );
-      this.labels[this.labels.length - 1].setAlpha(alpha);
-      this.text(px, py + 17, "★ " + data.name, 8);
-      this.labels[this.labels.length - 1].setAlpha(alpha);
+      this.labels[this.labelCursor - 1].setAlpha(alpha);
+      this.text(px, py + 17, "★".repeat(u.starLevel ?? 1) + " " + data.name, 8);
+      this.labels[this.labelCursor - 1].setAlpha(alpha);
       const hp = live ? live.hp / data.maxHP : 1,
         mana = live
           ? live.mana / data.maxMana
@@ -187,7 +207,7 @@ export class BoardScene extends Phaser.Scene {
                 ? "#94dfff"
                 : "#ffe1ba",
           );
-          this.labels[this.labels.length - 1].setAlpha(1 - age / 0.8);
+          this.labels[this.labelCursor - 1].setAlpha(1 - age / 0.8);
         }
       }
   }

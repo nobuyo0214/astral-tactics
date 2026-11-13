@@ -1,3 +1,6 @@
+import { RunScreen } from "./ui/RunScreen";
+import { Run, createRun } from "./game/run/run";
+import { loadRun } from "./game/run/save";
 import Phaser from "phaser";
 import "./styles/main.css";
 import { characters, characterById, skills } from "./game/data/characters";
@@ -9,6 +12,7 @@ import { loadSettings, saveSettings, tone } from "./ui/settings";
 import type { Cell } from "./game/core/types";
 const app = document.querySelector<HTMLDivElement>("#app")!;
 const settings = loadSettings();
+let runScreen: RunScreen | null = null;
 let game: Phaser.Game | null = null,
   battle: Battle | null = null,
   deployment = new Deployment(),
@@ -25,19 +29,47 @@ function bind(id: string, fn: () => void) {
   });
 }
 function dispose() {
+  document.body.classList.remove("battle-paused");
+  runScreen?.destroy();
+  runScreen = null;
   game?.destroy(true);
   game = null;
   battle = null;
 }
 function shell(content: string) {
-  app.innerHTML = `<div class="stardust"></div>${content}<footer>ASTRAL TACTICS <span>原創策略自走棋 · P1 ALPHA</span></footer>`;
+  app.innerHTML = `<div class="stardust"></div>${content}<footer>ASTRAL TACTICS <span>原創策略自走棋 · P2 ALPHA</span></footer>`;
   document.body.classList.toggle("reduced-motion", !settings.animations);
 }
 function menu() {
   dispose();
+  let saved: ReturnType<typeof loadRun>;
+  try {
+    saved = loadRun(localStorage);
+  } catch {
+    saved = { status: "unavailable", message: "瀏覽器不允許存取存檔。" };
+  }
   shell(
-    `<main class="menu"><div class="eyebrow">THE SHATTERED CONSTELLATION</div><div class="crest">✧</div><h1>星界戰棋</h1><p class="english">ASTRAL TACTICS</p><p class="intro">星環破碎之後，每一次佈陣，都是重寫命運的起點。</p><nav>${button("play", "開始遊戲 <span>↗</span>", "primary")}${button("codex", "角色圖鑑 <span>12 位星旅者</span>")}${button("settings", "遊戲設定 <span>⚙</span>")}${button("help", "操作說明 <span>?</span>")}</nav><small>P1 Alpha · 單人試煉</small></main>`,
+    `<main class="menu"><div class="eyebrow">THE SHATTERED CONSTELLATION</div><div class="crest">✧</div><h1>星界戰棋</h1><p class="english">ASTRAL TACTICS</p><p class="intro">星環破碎之後，每一次佈陣，都是重寫命運的起點。</p><nav>${button("run-new", "經營試煉 <span>P2 · 全新旅程 ↗</span>", "primary")}${button("run-continue", "繼續經營 <span>本機存檔</span>")}${button("play", "自由戰鬥 <span>P1 · 開始遊戲 ↗</span>")}${button("codex", "角色圖鑑 <span>12 位星旅者</span>")}${button("settings", "遊戲設定 <span>⚙</span>")}${button("help", "操作說明 <span>?</span>")}</nav><small>P2 Alpha · 十回合經營試煉 / 自由戰鬥</small><p class="menu-save" id="menu-save"></p></main>`,
   );
+  const openRun = (run: Run) => {
+    dispose();
+    runScreen = new RunScreen(app, run, settings, menu);
+    runScreen.mount();
+  };
+  bind("run-new", () =>
+    openRun(new Run(createRun(crypto.getRandomValues(new Uint32Array(1))[0]))),
+  );
+  (document.getElementById("run-continue") as HTMLButtonElement).disabled =
+    saved.status !== "loaded";
+  document.getElementById("menu-save")!.textContent =
+    saved.status === "loaded"
+      ? `已保存第 ${saved.state.round.number} 回合 · ${saved.state.player.hp} HP`
+      : saved.status === "empty"
+        ? "新旅程會自動儲存進度。"
+        : saved.message;
+  bind("run-continue", () => {
+    if (saved.status === "loaded") openRun(new Run(saved.state));
+  });
   bind("play", () => {
     deployment = new Deployment();
     selection = null;
@@ -57,7 +89,7 @@ function page(title: string, body: string) {
 function codex() {
   page(
     "星旅者圖鑑",
-    `<p class="muted">12 名原創角色 · 一星基礎數值 · 費用為未來經濟系統預留</p><div class="codex">${characters.map((c) => `<article class="character"><div class="sigil" style="color:#${c.color.toString(16)}">${c.symbol}</div><small>${c.faction} / ${c.class} · ${c.cost} 費 · ★</small><h2>${c.name}</h2><p>${c.description}</p><div class="stats">HP ${c.maxHP} · 攻擊 ${c.attack} · 防禦 ${c.defense}<br>攻速 ${c.attackSpeed} · 射程 ${c.attackRange} · 移速 ${c.moveSpeed}<br>能量 ${c.startingMana} / ${c.maxMana}</div><h3>${skills[c.skillId].name}</h3><p>${skills[c.skillId].description}</p></article>`).join("")}</div>`,
+    `<p class="muted">12 名原創角色 · 一星基礎數值 · 可於 P2 商店購買及升星</p><div class="codex">${characters.map((c) => `<article class="character"><div class="sigil" style="color:#${c.color.toString(16)}">${c.symbol}</div><small>${c.faction} / ${c.class} · ${c.cost} 費 · ★</small><h2>${c.name}</h2><p>${c.description}</p><div class="stats">HP ${c.maxHP} · 攻擊 ${c.attack} · 防禦 ${c.defense}<br>攻速 ${c.attackSpeed} · 射程 ${c.attackRange} · 移速 ${c.moveSpeed}<br>能量 ${c.startingMana} / ${c.maxMana}</div><h3>${skills[c.skillId].name}</h3><p>${skills[c.skillId].description}</p></article>`).join("")}</div>`,
   );
 }
 function settingsPage() {
@@ -110,6 +142,14 @@ function help() {
       [
         "06 / 重整旗鼓",
         "戰鬥中鎖定部署。重新挑戰會保留原始站位、清除本場狀態；重設部署會清空我方。三種試煉隨時可在準備階段切換。",
+      ],
+      [
+        "07 / 經營試煉",
+        "從 10 金幣、Lv.2 開始。商店購買進入九格備戰席，刷新花 2 金幣、買 4 XP 花 4 金幣；上場上限等於等級。三個相同角色及星級自動合成，出售按原卡數全額退還。",
+      ],
+      [
+        "08 / 回合與存檔",
+        "經營試煉共十回合，結束發收入與自然 XP；利息以發獎前每 10 金幣 +1、上限 +5。重要操作自動存檔，重新整理後可從主選單繼續，戰鬥中刷新會回到開戰前準備階段。",
       ],
     ]
       .map(
@@ -307,6 +347,7 @@ function start() {
   updateHUD();
 }
 function updateHUD() {
+  document.body.classList.toggle("battle-paused", battle?.paused ?? false);
   const alive = (team: string) =>
     battle
       ? battle.units.filter((u) => u.team === team && u.hp > 0).length

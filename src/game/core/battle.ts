@@ -1,5 +1,5 @@
 import type { BattleEvent, Placement, Result, Unit } from "./types";
-import { characterById, skills } from "../data/characters";
+import { effectiveCharacter, effectiveSkill } from "./attributes";
 import { distance, key, nextStep, targets } from "../ai/grid";
 import { cast } from "../systems/skills";
 export const STEP = 0.05;
@@ -14,7 +14,7 @@ export class Battle {
   private serial = 0;
   constructor(placements: Placement[]) {
     this.units = placements.map((p) => {
-      const data = characterById[p.characterId];
+      const data = effectiveCharacter(p.characterId, p.starLevel ?? 1);
       return {
         ...p,
         data,
@@ -68,7 +68,9 @@ export class Battle {
     if (target.hp <= 0) return;
     const defense =
       target.data.defense +
-      (target.buff === "armor" ? skills[target.data.skillId].power : 0);
+      (target.buff === "armor"
+        ? effectiveSkill(target.data.skillId, target.starLevel ?? 1).power
+        : 0);
     const damage = Math.max(
       1,
       Math.round((power * 100) / (100 + (magic ? defense * 0.5 : defense))),
@@ -117,12 +119,19 @@ export class Battle {
           this.hit(
             u,
             target,
-            u.data.attack + (u.empowered ? skills[u.data.skillId].power : 0),
+            u.data.attack +
+              (u.empowered
+                ? effectiveSkill(u.data.skillId, u.starLevel ?? 1).power
+                : 0),
           );
           u.empowered = false;
           u.mana = Math.min(u.data.maxMana, u.mana + 22);
           u.attackTimer =
-            1 / (u.data.attackSpeed * (u.buff === "haste" ? 1.65 : 1));
+            1 /
+            (u.data.attackSpeed *
+              (u.buff === "haste"
+                ? 1 + effectiveSkill(u.data.skillId, u.starLevel ?? 1).power
+                : 1));
         }
       } else if (u.moveTimer === 0) {
         const blocked = new Set(
