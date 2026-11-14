@@ -1,9 +1,9 @@
 import type { Unit } from "../core/types";
 import type { Battle } from "../core/battle";
-import { skills } from "../data/characters";
+import { effectiveSkill } from "../core/attributes";
 import { distance, targets } from "../ai/grid";
 export function cast(b: Battle, u: Unit): void {
-  const s = skills[u.data.skillId],
+  const s = effectiveSkill(u.data.skillId, u.starLevel ?? 1),
     foes = targets(u, b.units),
     target = foes[0];
   if (!target) return;
