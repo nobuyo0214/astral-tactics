@@ -1,3 +1,4 @@
+import { observeBoardViewport } from "./boardViewport";
 import Phaser from "phaser";
 import {
   BoardScene,
@@ -27,6 +28,14 @@ const btn = (id: string, label: string, disabled = false, cls = "") =>
   `<button id="${id}" class="${cls}" ${disabled ? "disabled" : ""}>${label}</button>`;
 export class RunScreen {
   private game: Phaser.Game | null = null;
+  private releaseViewport: () => void = () => {};
+  private infoTab = "unit";
+  private onKey = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      this.el("run-overlay").innerHTML = "";
+      this.setTab("unit");
+    }
+  };
   private selected: string | null = null;
   private speed = 1;
   private destroyed = false;
@@ -40,7 +49,25 @@ export class RunScreen {
     private onMenu: () => void,
   ) {}
   mount() {
-    this.app.innerHTML = `<div class="stardust"></div><main class="arena run-arena"><header class="arena-header"><button id="run-home" class="text-button">✧ 星界戰棋 <small>P2 / 經營試煉</small></button><div><span class="eyebrow">ECONOMY & TEAM BUILDING</span><h1 id="run-title"></h1></div><span id="run-phase" class="badge"></span></header><section id="run-top" class="run-top panel"></section><section class="battle-layout"><aside class="left-rail run-left"><section id="run-economy" class="panel"></section><section class="panel"><div class="eyebrow">TEN TRIALS</div><h2>重鑄星環</h2><p>購買 → 升星 → 部署 → 戰鬥</p><p>三個同星角色自動合成。棋盤位置優先保留。戰鬥後單位恢復，繼續下一回合。</p><p>點選或拖曳備戰席角色部署。點選棋子後可移回備戰席或出售。</p></section></aside><section class="board-panel"><div class="board-meta"><span id="run-counts"></span><span id="run-timer">0.00 / 60.00</span></div><div id="run-board" aria-label="經營試煉棋盤"></div><div class="board-bottom"><span>敵方預覽 / 上四排</span><span>我方部署 / 下四排</span></div></section><aside class="right-rail"><section class="panel" id="run-info"></section><section class="panel"><div class="eyebrow">SIMULATION CLOCK</div><div class="speed">${[1, 2, 4].map((s) => `<button data-run-speed="${s}" class="${s === 1 ? "active" : ""}">${s}×</button>`).join("")}${btn("run-pause", "暫停", true)}</div><p id="run-log">戰鬥限時 60 秒。可預先選擇速度。</p></section><section class="panel" id="run-odds"></section></aside></section><div class="run-actions"><p id="run-notice" role="status"></p><div>${btn("run-to-bench", "移回備戰席")}${btn("run-sell", "出售角色")}${btn("run-start", "開始戰鬥 ↗", false, "primary")}</div></div><section class="team-building"><section class="panel bench-panel"><div class="section-title"><div><div class="eyebrow">RESERVE · 9 SLOTS</div><h2>備戰席</h2></div><small>拖曳或點選移動 · 右鍵查看</small></div><div id="run-bench" class="bench-grid"></div></section><section class="panel shop-panel"><div class="section-title"><div><div class="eyebrow">CONSTELLATION EXCHANGE</div><h2>星旅者商店</h2></div><div id="shop-controls"></div></div><div id="run-shop" class="shop-grid"></div></section></section><p id="save-status" class="save-status"></p></main><div id="run-overlay"></div>`;
+    document.body.classList.add("game-view");
+    document.addEventListener("keydown", this.onKey);
+    this.app.innerHTML = `<div class="stardust"></div><main class="arena run-arena">
+      <header class="run-header"><div class="game-brand">✧ 星界戰棋 <small>P2 經營試煉</small></div><h1 id="run-title"></h1><section id="run-top" class="run-top"></section><span id="run-phase" class="badge"></span></header>
+      <section class="battle-layout">
+        <aside class="unit-sidebar panel"><div class="info-tabs" role="tablist" aria-label="戰術資訊"><button data-info-tab="unit" role="tab">角色資訊</button><button data-info-tab="skill" role="tab">技能</button><button data-info-tab="economy" role="tab">經濟與機率</button></div><section id="run-info" data-info-panel="unit"></section><section id="run-skill" data-info-panel="skill" hidden></section><section data-info-panel="economy" hidden><div id="run-economy"></div><div id="run-odds"></div></section></aside>
+        <section class="board-panel"><div class="board-meta"><span id="run-counts"></span><span id="run-timer">0.00 / 60.00</span></div><div id="run-board" class="board-viewport" aria-label="經營試煉棋盤"></div><div class="board-bottom"><span>敵方上四排 / 我方下四排</span><span>7 × 8 星界戰場</span></div></section>
+        <aside class="command-sidebar panel"><h2>試煉指令</h2><div id="shop-controls"></div><div class="speed">${[1, 2, 4].map((n) => `<button data-run-speed="${n}" class="${n === 1 ? "active" : ""}">${n}×</button>`).join("")}${btn("run-pause", "暫停", true)}</div><div class="unit-actions">${btn("run-to-bench", "移回備戰席")}${btn("run-sell", "出售角色")}</div>${btn("run-start", "開始戰鬥 ↗", false, "primary")}${btn("run-results", "查看結算", true)}${btn("run-home", "返回主選單")}<p id="run-log">三個同星角色自動合成。<br>可預先選擇戰鬥速度。</p></aside>
+      </section>
+      <p id="run-notice" role="status"></p>
+      <section class="bench-panel"><div class="section-title"><h2>備戰席 <small>9 格</small></h2><small>點選或拖曳部署 · 右鍵查看 · 拖回可交換</small></div><div id="run-bench" class="bench-grid"></div></section>
+      <section class="shop-panel"><div class="section-title"><h2>星旅者商店 <small>5 格</small></h2><small>購買後自動合成 · 星級上限 ★★★</small></div><div id="run-shop" class="shop-grid"></div></section>
+      <p id="save-status" class="save-status"></p>
+    </main><div id="run-overlay"></div>`;
+    this.app
+      .querySelectorAll<HTMLButtonElement>("[data-info-tab]")
+      .forEach((b) => (b.onclick = () => this.setTab(b.dataset.infoTab!)));
+    this.setTab(this.infoTab);
+    this.el("run-results").onclick = () => this.overlay();
     this.el("run-home").onclick = () => {
       this.destroy();
       this.onMenu();
@@ -112,6 +139,7 @@ export class RunScreen {
       audio: { noAudio: true },
     });
     const host = this.el("run-board");
+    this.releaseViewport = observeBoardViewport(this.game, host);
     host.ondragover = (e) => e.preventDefault();
     host.ondrop = (e) => {
       e.preventDefault();
@@ -131,6 +159,17 @@ export class RunScreen {
     };
     this.persist();
     this.render();
+  }
+  private setTab(tab: string) {
+    this.infoTab = tab;
+    this.app
+      .querySelectorAll<HTMLElement>("[data-info-panel]")
+      .forEach((el) => (el.hidden = el.dataset.infoPanel !== tab));
+    this.app.querySelectorAll<HTMLElement>("[data-info-tab]").forEach((el) => {
+      const active = el.dataset.infoTab === tab;
+      el.setAttribute("aria-selected", String(active));
+      el.classList.toggle("active", active);
+    });
   }
   private el(id: string): HTMLElement {
     return this.app.querySelector<HTMLElement>("#" + id)!;
@@ -189,27 +228,27 @@ export class RunScreen {
     const s = this.run.state,
       prep = s.round.phase === "preparation",
       income = s.economy.lastIncome;
-    this.el("run-title").textContent =
-      `第 ${s.round.number} / 10 回合 · ${rounds[s.round.number - 1].name}`;
+    this.el("run-title").textContent = `第 ${s.round.number} / 10 回合`;
+    this.el("run-title").title = rounds[s.round.number - 1].name;
     this.el("run-top").innerHTML =
       `<div><small>玩家生命</small><strong class="hp">${s.player.hp}<em>/ 100</em></strong></div><div id="run-gold"><small>星金</small><strong class="gold">${s.economy.gold}<em>金幣</em></strong></div><div id="run-level"><small>玩家等級</small><strong>Lv.${s.player.level}</strong></div><div><small>經驗進度</small><strong>${s.player.xp}<em>/ ${s.player.level === 9 ? "MAX" : XP_REQUIRED[s.player.level]} XP</em></strong><progress max="${XP_REQUIRED[s.player.level] || 1}" value="${s.player.level === 9 ? 1 : s.player.xp}"></progress></div><div><small>連勝／連敗</small><strong>${s.economy.wins ? `${s.economy.wins} 連勝` : s.economy.losses ? `${s.economy.losses} 連敗` : "—"}</strong></div><div><small>目前上場</small><strong id="run-field-count">${boardPlacements(s).length} / ${s.player.level}</strong></div>`;
     this.el("run-economy").innerHTML =
-      `<div class="eyebrow">ECONOMY FORECAST</div><h2>經濟管理</h2><p>本回合預估利息 <b class="gold">+${interest(s.economy.gold)}</b></p><small>結束時、獎勵發放前每 10 金幣 +1，上限 +5。</small><h3>上回合收入明細</h3>${income ? `<p>基本 +${income.base}<br>利息 +${income.interest}<br>連勝／連敗 +${income.streak}<br>特殊獎勵 +${income.special}</p><strong class="gold">總收入 +${income.total}</strong>` : "<p>尚未結算任何回合。</p>"}`;
+      `<h3>收入預估</h3><p>本回合預估利息 <b class="gold">+${interest(s.economy.gold)}</b></p><small>結束時、獎勵發放前每 10 金幣 +1，上限 +5。</small><h3>上回合收入</h3>${income ? `<p>基本 +${income.base} · 利息 +${income.interest}<br>連續獎勵 +${income.streak} · 特殊 +${income.special}</p><strong class="gold">總收入 +${income.total}</strong>` : "<p>尚未結算任何回合。</p>"}`;
     this.el("run-odds").innerHTML =
-      `<div class="eyebrow">SHOP PROBABILITIES</div><h3>Lv.${s.player.level} 抽卡機率</h3><p>${SHOP_ODDS[s.player.level].map((n, i) => `${i + 1} 費：${n}%`).join("<br>")}</p>`;
+      `<h3>Lv.${s.player.level} 抽卡機率</h3><p>${SHOP_ODDS[s.player.level].map((n, i) => `${i + 1} 費：${n}%`).join("　")}</p>`;
     this.el("run-bench").innerHTML = Array.from({ length: 9 }, (_, slot) => {
       const u = s.units.find(
           (u) => u.location.zone === "bench" && u.location.slot === slot,
         ),
         c = u ? characterById[u.characterId] : null;
-      return `<button class="bench-slot ${u?.id === this.selected ? "selected" : ""}" data-bench-slot="${slot}" ${u ? `data-owned="${u.id}" draggable="${prep}"` : ""} ${!prep ? "disabled" : ""}><small class="slot-number">${slot + 1}</small>${u && c ? `<span style="color:#${c.color.toString(16)}">${c.symbol}</span><strong>${c.name}</strong><small class="star">${"★".repeat(u.starLevel)}</small>` : '<span class="empty-slot">＋</span>'}</button>`;
+      return `<button class="bench-slot ${u?.id === this.selected ? "selected" : ""}" data-bench-slot="${slot}" ${u ? `data-owned="${u.id}" draggable="${prep}"` : ""} ${!prep ? "disabled" : ""}><small class="slot-number">${slot + 1}</small>${u && c ? `<span style="color:#${c.color.toString(16)}">${c.symbol}</span><strong>${c.name}</strong><small class="star">${"★".repeat(u.starLevel)} <span class="bench-cost">${c.cost}金</span></small>` : '<span class="empty-slot">＋</span>'}</button>`;
     }).join("");
     this.el("shop-controls").innerHTML =
       `${btn("shop-refresh", "刷新 · 2 金幣", !prep || s.economy.gold < RULES.refreshCost)}${btn("shop-lock", s.shop.locked ? "🔒 已鎖定" : "鎖定商店", !prep, s.shop.locked ? "active" : "")}${btn("buy-xp", s.player.level === 9 ? "已達滿級" : "購買 4 XP · 4 金幣", !prep || s.economy.gold < RULES.xpCost || s.player.level === 9)}`;
     this.el("run-shop").innerHTML = s.shop.slots
       .map((slot, index) => {
         const c = slot.characterId ? characterById[slot.characterId] : null;
-        return `<article class="shop-card ${c ? "" : "sold"}">${c ? `<div class="shop-sigil" style="color:#${c.color.toString(16)}">${c.symbol}<span>${c.cost} 金幣</span></div><h3>${c.name}</h3><p>${c.faction} / ${c.class}</p><small>持有 ${ownedCopies(s, c.id)} 張一星卡</small><button data-buy="${index}" ${!prep || s.economy.gold < c.cost ? "disabled" : ""}>${s.economy.gold < c.cost ? "金幣不足" : `購買 · ${c.cost} 金幣`}</button>` : '<div class="sold-mark">✧</div><p>已售出／卡池耗盡</p>'}</article>`;
+        return `<article class="shop-card ${c ? "" : "sold"}">${c ? `<div class="shop-sigil" style="color:#${c.color.toString(16)}">${c.symbol}</div><div class="shop-text"><h3>${c.name} <span class="star">★</span></h3><p>${c.faction} / ${c.class}</p><small>${c.cost} 金幣 · 持有 ${ownedCopies(s, c.id)} 張</small></div><button data-buy="${index}" ${!prep || s.economy.gold < c.cost ? "disabled" : ""}>${s.economy.gold < c.cost ? "金幣不足" : `購買 ${c.cost}金`}</button>` : '<span class="sold-mark">✧</span><p>已售出／卡池耗盡</p>'}</article>`;
       })
       .join("");
     this.el("shop-refresh").onclick = () =>
@@ -276,6 +315,9 @@ export class RunScreen {
     } else
       this.el("run-info").innerHTML =
         '<div class="eyebrow">STAR TRAVELER</div><h2>你的星旅者</h2><p>購買後點選棋子或備戰席角色，查看星級、有效數值與出售價格。</p>';
+    if (!this.selected)
+      this.el("run-skill").innerHTML =
+        "<h2>技能檔案</h2><p>點選任意我方或敵方棋子查看技能。</p>";
     this.el("run-notice").textContent = this.feedback;
     this.el("save-status").textContent =
       this.saveWarning || "✓ 已自動儲存 · 戰鬥中重新整理會回到本回合開戰前";
@@ -291,8 +333,25 @@ export class RunScreen {
       star = u?.starLevel ?? combat?.starLevel ?? enemy?.starLevel ?? 1,
       c = effectiveCharacter(characterId, star),
       skill = effectiveSkill(c.skillId, star);
+    const strength = Math.round(STAR_SKILL[star - 1] * 100);
     this.el("run-info").innerHTML =
-      `<div class="eyebrow">${u ? "我方持有角色" : "星旅者檔案"} · ${c.cost} 費</div><h2>${c.name}</h2><p class="star">${"★".repeat(star)}</p><p>${c.faction} / ${c.class}</p><div class="stats">生命 <b>${c.maxHP}</b>　攻擊 <b>${c.attack}</b><br>防禦 ${c.defense}　攻速 ${c.attackSpeed}<br>射程 ${c.attackRange}　移速 ${c.moveSpeed}</div><h3>${skill.name}</h3><p>一星基礎：${skills[c.skillId].description}</p><small>星級技能強度 ${Math.round(STAR_SKILL[star - 1] * 100)}% · 效果值 ${Number(skill.power.toFixed(2))}</small>${u ? `<p class="gold">出售價格 ${c.cost * copiesForStar(star)} 金幣</p>` : ""}`;
+      `<div class="eyebrow">${u ? "我方持有角色" : "星旅者檔案"} · ${c.cost} 費</div><h2>${c.name} <span class="star">${"★".repeat(star)}</span></h2><p>${c.faction} / ${c.class}</p><dl class="unit-stats">${[
+        ["生命", c.maxHP],
+        ["攻擊", c.attack],
+        ["防禦", c.defense],
+        ["攻速", c.attackSpeed],
+        ["射程", c.attackRange],
+        ["移速", c.moveSpeed],
+      ]
+        .map(
+          ([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`,
+        )
+        .join(
+          "",
+        )}</dl><h3>${skill.name}</h3><p>技能強度 ${strength}%</p><button id="show-unit-skill">查看技能效果 →</button>${u ? `<p class="gold">出售價格 ${c.cost * copiesForStar(star)} 金幣</p>` : ""}`;
+    this.el("run-skill").innerHTML =
+      `<h2>${c.name} <span class="star">${"★".repeat(star)}</span></h2><h3>${skill.name}</h3><p>一星基礎：${skills[c.skillId].description}</p><p>星級技能強度 ${strength}%<br>目前效果值 ${Number(skill.power.toFixed(2))}</p><p>能量 ${c.startingMana} / ${c.maxMana}<br>滿能量自動施放，施放間隔至少 1.2 秒。</p>`;
+    this.el("show-unit-skill").onclick = () => this.setTab("skill");
   }
   private boardClick(cell: Cell, id?: string) {
     const s = this.run.state;
@@ -338,6 +397,8 @@ export class RunScreen {
           completed: "試煉完成",
           gameOver: "挑戰失敗",
         }[s.round.phase];
+    (this.el("run-results") as HTMLButtonElement).disabled =
+      s.round.phase === "preparation" || s.round.phase === "combat";
     const pause = this.el("run-pause") as HTMLButtonElement;
     pause.disabled = s.round.phase !== "combat";
     pause.textContent = b?.paused ? "繼續" : "暫停";
@@ -375,7 +436,11 @@ export class RunScreen {
     const r = s.round.lastResult!,
       income = s.economy.lastIncome!,
       final = phase === "completed" || phase === "gameOver";
-    host.innerHTML = `<div class="modal-backdrop"><section class="result panel" role="dialog" aria-modal="true" aria-label="${final ? "經營試煉總結" : "經營回合結算"}"><div class="eyebrow">${final ? "RUN COMPLETE" : "ROUND SETTLEMENT"} / ${r.reason === "timeout" ? "超時結算" : "全滅結算"}</div><div class="crest">✧</div><h1>${phase === "completed" ? "試煉完成" : phase === "gameOver" ? "挑戰失敗" : r.winner === "player" ? "本回合勝利" : r.winner === "enemy" ? "本回合失敗" : "本回合平局"}</h1><p>第 ${s.round.number} 回合 · ${r.time.toFixed(2)} 秒 · 雙方存活 ${r.playerAlive} / ${r.enemyAlive}</p><div class="result-stats"><span>玩家 HP<b>${s.player.hp}</b></span><span>金幣<b>${s.economy.gold}</b></span><span>等級<b>Lv.${s.player.level}</b></span><span>本回合收入<b>+${income.total}</b></span><span>造成傷害<b>${r.damage}</b></span></div><p>基本 ${income.base} + 利息 ${income.interest} + 連勝／連敗 ${income.streak} + 特殊 ${income.special}</p>${final ? `<div class="result-stats"><span>完成回合<b>${s.stats.completedRounds}</b></span><span>最高連勝<b>${s.stats.highestWinStreak}</b></span><span>累計傷害<b>${s.stats.totalDamage}</b></span><span>最高星級<b>${"★".repeat(s.stats.highestStar)}</b></span></div><h3>最終隊伍配置</h3><div class="damage-list">${s.units.map((u) => `<p>${characterById[u.characterId].name} ${"★".repeat(u.starLevel)}<span>${u.location.zone === "board" ? `${String.fromCharCode(65 + u.location.cell.x)}${u.location.cell.y + 1}` : `備戰席 ${u.location.slot + 1}`}</span></p>`).join("") || "<p>無持有角色</p>"}</div>${btn("run-restart", "重新開始", false, "primary")}` : btn("run-next", "前往下一回合", false, "primary")}${btn("run-result-home", "返回主選單")}</section></div>`;
+    host.innerHTML = `<div class="modal-backdrop"><section class="result panel" role="dialog" aria-modal="true" aria-label="${final ? "經營試煉總結" : "經營回合結算"}"><button id="close-run-result" class="modal-close" aria-label="關閉結算">×</button><div class="eyebrow">${final ? "RUN COMPLETE" : "ROUND SETTLEMENT"} / ${r.reason === "timeout" ? "超時結算" : "全滅結算"}</div><div class="crest">✧</div><h1>${phase === "completed" ? "試煉完成" : phase === "gameOver" ? "挑戰失敗" : r.winner === "player" ? "本回合勝利" : r.winner === "enemy" ? "本回合失敗" : "本回合平局"}</h1><p>第 ${s.round.number} 回合 · ${r.time.toFixed(2)} 秒 · 雙方存活 ${r.playerAlive} / ${r.enemyAlive}</p><div class="result-stats"><span>玩家 HP<b>${s.player.hp}</b></span><span>金幣<b>${s.economy.gold}</b></span><span>等級<b>Lv.${s.player.level}</b></span><span>本回合收入<b>+${income.total}</b></span><span>造成傷害<b>${r.damage}</b></span></div><p>基本 ${income.base} + 利息 ${income.interest} + 連勝／連敗 ${income.streak} + 特殊 ${income.special}</p>${final ? `<div class="result-stats"><span>完成回合<b>${s.stats.completedRounds}</b></span><span>最高連勝<b>${s.stats.highestWinStreak}</b></span><span>累計傷害<b>${s.stats.totalDamage}</b></span><span>最高星級<b>${"★".repeat(s.stats.highestStar)}</b></span></div><h3>最終隊伍配置</h3><div class="damage-list">${s.units.map((u) => `<p>${characterById[u.characterId].name} ${"★".repeat(u.starLevel)}<span>${u.location.zone === "board" ? `${String.fromCharCode(65 + u.location.cell.x)}${u.location.cell.y + 1}` : `備戰席 ${u.location.slot + 1}`}</span></p>`).join("") || "<p>無持有角色</p>"}</div>${btn("run-restart", "重新開始", false, "primary")}` : btn("run-next", "前往下一回合", false, "primary")}${btn("run-result-home", "返回主選單")}</section></div>`;
+    this.el("close-run-result").onclick = () => {
+      host.innerHTML = "";
+      this.el("run-results").focus();
+    };
     if (!final)
       this.el("run-next").onclick = () => {
         this.selected = null;
@@ -395,7 +460,9 @@ export class RunScreen {
     this.el(final ? "run-restart" : "run-next").focus();
   }
   destroy() {
-    document.body.classList.remove("battle-paused");
+    document.body.classList.remove("battle-paused", "game-view");
+    document.removeEventListener("keydown", this.onKey);
+    this.releaseViewport();
     if (this.destroyed) return;
     this.destroyed = true;
     this.game?.destroy(true);
