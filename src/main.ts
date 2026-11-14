@@ -1,8 +1,10 @@
+import { observeBoardViewport } from "./ui/boardViewport";
 import { RunScreen } from "./ui/RunScreen";
 import { Run, createRun } from "./game/run/run";
 import { loadRun } from "./game/run/save";
 import Phaser from "phaser";
 import "./styles/main.css";
+import "./styles/gameplay.css";
 import { characters, characterById, skills } from "./game/data/characters";
 import { enemies, levels } from "./game/data/levels";
 import { Deployment } from "./game/core/deployment";
@@ -13,6 +15,7 @@ import type { Cell } from "./game/core/types";
 const app = document.querySelector<HTMLDivElement>("#app")!;
 const settings = loadSettings();
 let runScreen: RunScreen | null = null;
+let releaseBoardViewport: () => void = () => {};
 let game: Phaser.Game | null = null,
   battle: Battle | null = null,
   deployment = new Deployment(),
@@ -29,7 +32,8 @@ function bind(id: string, fn: () => void) {
   });
 }
 function dispose() {
-  document.body.classList.remove("battle-paused");
+  document.body.classList.remove("battle-paused", "game-view");
+  releaseBoardViewport();
   runScreen?.destroy();
   runScreen = null;
   game?.destroy(true);
@@ -219,10 +223,11 @@ function remove(id: string) {
 }
 function prepare() {
   dispose();
+  document.body.classList.add("game-view");
   deployment.locked = false;
   lastEvent = -1;
   shell(
-    `<main class="arena"><header class="arena-header"><a id="home" href="#">✧ 星界戰棋 <small>P1 ALPHA</small></a><div><span class="eyebrow">裂星遠征 / 測試試煉</span><h1 id="round-title">${levels[level].name}</h1></div><div id="phase" class="badge">部署階段</div></header><section class="battle-layout"><aside class="left-rail"><div class="eyebrow">CHOOSE YOUR TRIAL</div><h2>選擇試煉</h2>${levels.map((l, i) => `<button class="level ${i === level ? "active" : ""}" data-level="${i}"><small>${l.subtitle}</small><strong>${l.name}</strong><span>${l.ids.length} 名敵人 ${i === 0 ? "· 入門" : i === 1 ? "· 進階" : "· 挑戰"}</span></button>`).join("")}<div class="panel field-notes"><h3>戰術筆記</h3><p>${levels[level].description}</p><p>守護者在前，射手在後。<br>點選或拖曳配置你的星旅者。</p><div class="legend"><i></i>我方部署區 <i class="red"></i>敵方部署區</div></div></aside><section class="board-panel"><div class="board-meta"><span id="counts">我方 0 / 5 · 敵方 ${enemies(level).length}</span><span id="timer">00.00 / 60.00</span></div><div id="board" aria-label="7 欄 8 排戰鬥棋盤"></div><div class="board-bottom"><span>✧ 方格座標 A–G / 1–8</span><span>下半場為我方部署區</span></div></section><aside class="right-rail"><section id="unit-info" class="panel"></section><section class="panel controls"><div class="eyebrow">SIMULATION CLOCK</div><div class="speed">${[1, 2, 4].map((s) => `<button data-speed="${s}" class="${s === 1 ? "active" : ""}">${s}×</button>`).join("")}${button("pause", "暫停")}</div><p>戰鬥限時 60 秒<br>相同配置，確定性模擬。</p></section><section class="panel"><h3>戰場紀錄</h3><div id="log" aria-live="off">等待星旅者入場。</div></section></aside></section><section class="roster-panel"><div class="roster-heading"><div><span class="eyebrow">YOUR CONSTELLATION</span><h2>星旅者 / 備戰區 <small>12 名已解鎖</small></h2></div>${button("remove", "移回備戰區")}</div><div class="roster">${characters.map((c) => `<button class="roster-card ${c.id === chosen ? "selected" : ""}" data-char="${c.id}"><span style="color:#${c.color.toString(16)}">${c.symbol}</span><strong>${c.name}</strong><small>${c.class} · ${c.cost} 費 ★</small></button>`).join("")}</div></section><div class="action-bar"><p id="notice" role="status">選擇星旅者，再點擊下半場空格部署。</p><div>${button("reset", "重設部署")}${button("retry", "重新挑戰")}${button("start", "開始戰鬥 ↗", "primary")}</div></div></main><div id="result"></div>`,
+    `<main class="arena free-arena"><header class="arena-header"><a id="home" href="#">✧ 星界戰棋 <small>P1 ALPHA</small></a><div><span class="eyebrow">裂星遠征 / 測試試煉</span><h1 id="round-title">${levels[level].name}</h1></div><div id="phase" class="badge">部署階段</div></header><section class="battle-layout"><aside class="left-rail"><div class="eyebrow">CHOOSE YOUR TRIAL</div><h2>選擇試煉</h2>${levels.map((l, i) => `<button class="level ${i === level ? "active" : ""}" data-level="${i}"><small>${l.subtitle}</small><strong>${l.name}</strong><span>${l.ids.length} 名敵人 ${i === 0 ? "· 入門" : i === 1 ? "· 進階" : "· 挑戰"}</span></button>`).join("")}<div class="panel field-notes"><h3>戰術筆記</h3><p>${levels[level].description}</p><p>守護者在前，射手在後。<br>點選或拖曳配置你的星旅者。</p><div class="legend"><i></i>我方部署區 <i class="red"></i>敵方部署區</div></div></aside><section class="board-panel"><div class="board-meta"><span id="counts">我方 0 / 5 · 敵方 ${enemies(level).length}</span><span id="timer">00.00 / 60.00</span></div><div id="board" class="board-viewport" aria-label="7 欄 8 排戰鬥棋盤"></div><div class="board-bottom"><span>✧ 方格座標 A–G / 1–8</span><span>下半場為我方部署區</span></div></section><aside class="right-rail"><section id="unit-info" class="panel"></section><section class="panel controls"><div class="eyebrow">SIMULATION CLOCK</div><div class="speed">${[1, 2, 4].map((s) => `<button data-speed="${s}" class="${s === 1 ? "active" : ""}">${s}×</button>`).join("")}${button("pause", "暫停")}</div>${button("free-log-toggle", "戰場紀錄")}</section><section class="panel info-popover" id="free-log-panel" role="dialog" aria-label="戰場紀錄" hidden>${button("close-free-log", "關閉 ×")}<h3>戰場紀錄</h3><div id="log" aria-live="off">等待星旅者入場。</div></section></aside></section><section class="roster-panel"><div class="roster-heading"><div><span class="eyebrow">YOUR CONSTELLATION</span><h2>星旅者 / 備戰區 <small>12 名已解鎖</small></h2></div>${button("remove", "移回備戰區")}</div><div class="roster">${characters.map((c) => `<button class="roster-card ${c.id === chosen ? "selected" : ""}" data-char="${c.id}"><span style="color:#${c.color.toString(16)}">${c.symbol}</span><strong>${c.name}</strong><small>${c.class} · ${c.cost} 費 ★</small></button>`).join("")}</div></section><div class="action-bar"><p id="notice" role="status">選擇星旅者，再點擊下半場空格部署。</p><div>${button("reset", "重設部署")}${button("retry", "重新挑戰")}${button("free-results", "查看結算")}${button("start", "開始戰鬥 ↗", "primary")}</div></div></main><div id="result"></div>`,
   );
   bind("home", menu);
   document
@@ -270,6 +275,17 @@ function prepare() {
     prepare();
   });
   bind("start", start);
+  bind("free-results", () => {
+    if (battle?.result) result();
+  });
+  bind("free-log-toggle", () => {
+    document.getElementById("free-log-panel")!.hidden = false;
+    document.getElementById("close-free-log")!.focus();
+  });
+  bind("close-free-log", () => {
+    document.getElementById("free-log-panel")!.hidden = true;
+    document.getElementById("free-log-toggle")!.focus();
+  });
   bind("pause", () => {
     if (!battle || battle.result) return;
     battle.paused = !battle.paused;
@@ -328,6 +344,10 @@ function prepare() {
     render: { antialias: true },
     audio: { noAudio: true },
   });
+  releaseBoardViewport = observeBoardViewport(
+    game,
+    document.getElementById("board")!,
+  );
   updateHUD();
 }
 function start() {
@@ -347,6 +367,10 @@ function start() {
   updateHUD();
 }
 function updateHUD() {
+  const summary = document.getElementById(
+    "free-results",
+  ) as HTMLButtonElement | null;
+  if (summary) summary.disabled = !battle?.result;
   document.body.classList.toggle("battle-paused", battle?.paused ?? false);
   const alive = (team: string) =>
     battle
@@ -369,14 +393,25 @@ function updateHUD() {
 function result() {
   const r = battle!.result!;
   document.getElementById("result")!.innerHTML =
-    `<div class="modal-backdrop"><section class="result panel" role="dialog" aria-modal="true" aria-label="戰鬥結算"><div class="eyebrow">TRIAL COMPLETE / ${r.reason === "timeout" ? "超時結算" : "全滅結算"}</div><div class="crest">✧</div><h1>${r.winner === "player" ? "試煉勝利" : r.winner === "enemy" ? "試煉失敗" : "星庭平局"}</h1><p>${levels[level].name} · ${r.time.toFixed(2)} 秒</p><div class="result-stats"><span>我方存活<b>${r.playerAlive}</b></span><span>敵方存活<b>${r.enemyAlive}</b></span><span>造成傷害<b>${r.damage}</b></span><span>承受傷害<b>${r.taken}</b></span><span>治療總量<b>${r.healing}</b></span></div><div class="damage-list">${battle!.units
+    `<div class="modal-backdrop"><section class="result panel" role="dialog" aria-modal="true" aria-label="戰鬥結算"><button id="close-free-result" class="modal-close" aria-label="關閉結算">×</button><div class="eyebrow">TRIAL COMPLETE / ${r.reason === "timeout" ? "超時結算" : "全滅結算"}</div><div class="crest">✧</div><h1>${r.winner === "player" ? "試煉勝利" : r.winner === "enemy" ? "試煉失敗" : "星庭平局"}</h1><p>${levels[level].name} · ${r.time.toFixed(2)} 秒</p><div class="result-stats"><span>我方存活<b>${r.playerAlive}</b></span><span>敵方存活<b>${r.enemyAlive}</b></span><span>造成傷害<b>${r.damage}</b></span><span>承受傷害<b>${r.taken}</b></span><span>治療總量<b>${r.healing}</b></span></div><div class="damage-list">${battle!.units
       .filter((u) => u.team === "player")
       .map((u) => `<p>${u.data.name}<span>${u.damage} 傷害</span></p>`)
       .join(
         "",
       )}</div>${button("again", "重新挑戰", "primary")}${button("return", "返回主選單")}</section></div>`;
+  bind("close-free-result", () => {
+    document.getElementById("result")!.innerHTML = "";
+    document.getElementById("free-results")?.focus();
+  });
   bind("again", prepare);
   bind("return", menu);
   document.getElementById("again")!.focus();
 }
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    document.getElementById("close-free-result")?.click();
+    const log = document.getElementById("free-log-panel");
+    if (log && !log.hidden) document.getElementById("close-free-log")?.click();
+  }
+});
 menu();
