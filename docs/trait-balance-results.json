@@ -1,0 +1,1897 @@
+{
+  "rules": "每隊8名、一星、Lv.8、總費用20；兩個站位種子；雙向換邊；全配對。非隨機傷害。",
+  "seeds": [
+    11,
+    97
+  ],
+  "battles": 220,
+  "steps": 115664,
+  "maxUnits": 42,
+  "maxRetainedEvents": 169,
+  "wallMilliseconds": 3989.42,
+  "teams": [
+    {
+      "name": "純戰士",
+      "roster": [
+        "flame",
+        "bolt",
+        "judge",
+        "forge",
+        "flame",
+        "bolt",
+        "bolt",
+        "judge"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 17,
+      "draws": 0,
+      "time": 677.4499999999999,
+      "damage": 289695.5900000001,
+      "healing": 0,
+      "taken": 250354,
+      "timeouts": 0,
+      "winRate": 42.5,
+      "averageTime": 16.94,
+      "averageDamage": 7242.39,
+      "averageHealing": 0,
+      "averageTaken": 6258.85,
+      "timeoutRate": 0
+    },
+    {
+      "name": "純法師",
+      "roster": [
+        "plume",
+        "spark",
+        "astral",
+        "snow",
+        "snow",
+        "snow",
+        "snow",
+        "snow"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 24,
+      "draws": 0,
+      "time": 613.3499999999999,
+      "damage": 286832.4750000001,
+      "healing": 0,
+      "taken": 182838,
+      "timeouts": 0,
+      "winRate": 60,
+      "averageTime": 15.33,
+      "averageDamage": 7170.81,
+      "averageHealing": 0,
+      "averageTaken": 4570.95,
+      "timeoutRate": 0
+    },
+    {
+      "name": "射手守護者",
+      "roster": [
+        "ember",
+        "oak",
+        "leaf",
+        "thunder",
+        "oak",
+        "oak",
+        "oak",
+        "oak"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 13,
+      "draws": 0,
+      "time": 1458.4999999999995,
+      "damage": 270939.66500000004,
+      "healing": 32015.400000000005,
+      "taken": 348993.00000000006,
+      "timeouts": 3,
+      "winRate": 32.5,
+      "averageTime": 36.46,
+      "averageDamage": 6773.49,
+      "averageHealing": 800.39,
+      "averageTaken": 8724.83,
+      "timeoutRate": 7.5
+    },
+    {
+      "name": "烈焰持續傷害",
+      "roster": [
+        "flame",
+        "ember",
+        "plume",
+        "cinder",
+        "spark",
+        "coin",
+        "veil",
+        "comet"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 6,
+      "draws": 0,
+      "time": 888.3,
+      "damage": 281669.605,
+      "healing": 62960.357999999986,
+      "taken": 283530.85800000007,
+      "timeouts": 0,
+      "winRate": 15,
+      "averageTime": 22.21,
+      "averageDamage": 7041.74,
+      "averageHealing": 1574.01,
+      "averageTaken": 7088.27,
+      "timeoutRate": 0
+    },
+    {
+      "name": "霜月控制",
+      "roster": [
+        "rime",
+        "veil",
+        "snow",
+        "dew",
+        "rime",
+        "veil",
+        "snow",
+        "dew"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 16,
+      "draws": 0,
+      "time": 1236.8500000000001,
+      "damage": 280954.975,
+      "healing": 242535,
+      "taken": 432628,
+      "timeouts": 6,
+      "winRate": 40,
+      "averageTime": 30.92,
+      "averageDamage": 7023.87,
+      "averageHealing": 6063.38,
+      "averageTaken": 10815.7,
+      "timeoutRate": 15
+    },
+    {
+      "name": "雷霆爆發",
+      "roster": [
+        "thunder",
+        "bolt",
+        "spark",
+        "relay",
+        "astral",
+        "grove",
+        "veil",
+        "coin"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 34,
+      "draws": 0,
+      "time": 561.1,
+      "damage": 303723.95,
+      "healing": 28388,
+      "taken": 183123,
+      "timeouts": 0,
+      "winRate": 85,
+      "averageTime": 14.03,
+      "averageDamage": 7593.1,
+      "averageHealing": 709.7,
+      "averageTaken": 4578.08,
+      "timeoutRate": 0
+    },
+    {
+      "name": "自然治療",
+      "roster": [
+        "grove",
+        "leaf",
+        "oak",
+        "briar",
+        "plume",
+        "spark",
+        "coin",
+        "veil"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 13,
+      "draws": 0,
+      "time": 996.9,
+      "damage": 296475.48800000007,
+      "healing": 60306.19,
+      "taken": 317780.7849999999,
+      "timeouts": 2,
+      "winRate": 32.5,
+      "averageTime": 24.92,
+      "averageDamage": 7411.89,
+      "averageHealing": 1507.65,
+      "averageTaken": 7944.52,
+      "timeoutRate": 5
+    },
+    {
+      "name": "深淵吸血",
+      "roster": [
+        "shade",
+        "vessel",
+        "wisp",
+        "omen",
+        "ember",
+        "thunder",
+        "astral",
+        "forge"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 16,
+      "draws": 0,
+      "time": 1257.8000000000002,
+      "damage": 291772.15,
+      "healing": 99360.81,
+      "taken": 392811.00999999995,
+      "timeouts": 5,
+      "winRate": 40,
+      "averageTime": 31.45,
+      "averageDamage": 7294.3,
+      "averageHealing": 2484.02,
+      "averageTaken": 9820.28,
+      "timeoutRate": 12.5
+    },
+    {
+      "name": "星辰技能",
+      "roster": [
+        "astral",
+        "lumen",
+        "judge",
+        "comet",
+        "relay",
+        "ballista",
+        "shade",
+        "ledger"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 36,
+      "draws": 0,
+      "time": 1027.4500000000003,
+      "damage": 349348.7899999999,
+      "healing": 108433.34999999999,
+      "taken": 263723.45000000007,
+      "timeouts": 2,
+      "winRate": 90,
+      "averageTime": 25.69,
+      "averageDamage": 8733.72,
+      "averageHealing": 2710.83,
+      "averageTaken": 6593.09,
+      "timeoutRate": 5
+    },
+    {
+      "name": "黃金經濟",
+      "roster": [
+        "gilt",
+        "coin",
+        "ledger",
+        "broker",
+        "gilt",
+        "coin",
+        "ledger",
+        "coin"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 20,
+      "draws": 0,
+      "time": 1216.55,
+      "damage": 319599.1099999999,
+      "healing": 0,
+      "taken": 265778,
+      "timeouts": 6,
+      "winRate": 50,
+      "averageTime": 30.41,
+      "averageDamage": 7989.98,
+      "averageHealing": 0,
+      "averageTaken": 6644.45,
+      "timeoutRate": 15
+    },
+    {
+      "name": "多羈絆混合",
+      "roster": [
+        "lumen",
+        "astral",
+        "grove",
+        "oak",
+        "grove",
+        "grove",
+        "grove",
+        "leaf"
+      ],
+      "cost": 20,
+      "units": 8,
+      "star": 1,
+      "level": 8,
+      "played": 40,
+      "wins": 25,
+      "draws": 0,
+      "time": 1632.1500000000003,
+      "damage": 371832.905,
+      "healing": 286641.2,
+      "taken": 421284.6,
+      "timeouts": 12,
+      "winRate": 62.5,
+      "averageTime": 40.8,
+      "averageDamage": 9295.82,
+      "averageHealing": 7166.03,
+      "averageTaken": 10532.12,
+      "timeoutRate": 30
+    }
+  ],
+  "matches": [
+    {
+      "player": "純戰士",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 12.7
+    },
+    {
+      "player": "純法師",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 12.45
+    },
+    {
+      "player": "純戰士",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 12.75
+    },
+    {
+      "player": "純法師",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 8.15
+    },
+    {
+      "player": "純戰士",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 20.45
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 24.7
+    },
+    {
+      "player": "純戰士",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 22.15
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 20.35
+    },
+    {
+      "player": "純戰士",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 16.2
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 13.05
+    },
+    {
+      "player": "純戰士",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 11.5
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 12.15
+    },
+    {
+      "player": "純戰士",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 20.8
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 18.55
+    },
+    {
+      "player": "純戰士",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 14.45
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 24.25
+    },
+    {
+      "player": "純戰士",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 8.2
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 9.25
+    },
+    {
+      "player": "純戰士",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 8.95
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 8.15
+    },
+    {
+      "player": "純戰士",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 20.15
+    },
+    {
+      "player": "自然治療",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 14.5
+    },
+    {
+      "player": "純戰士",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 15
+    },
+    {
+      "player": "自然治療",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 16.15
+    },
+    {
+      "player": "純戰士",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 18
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 22
+    },
+    {
+      "player": "純戰士",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 21.9
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 18.1
+    },
+    {
+      "player": "純戰士",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 20.8
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 16.75
+    },
+    {
+      "player": "純戰士",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 19.65
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 18.45
+    },
+    {
+      "player": "純戰士",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 16.6
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 15.85
+    },
+    {
+      "player": "純戰士",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 14.55
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 14.15
+    },
+    {
+      "player": "純戰士",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 28.25
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "純戰士",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 18.95
+    },
+    {
+      "player": "純戰士",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 21.95
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "純戰士",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 26.5
+    },
+    {
+      "player": "純法師",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 23.9
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 16.85
+    },
+    {
+      "player": "純法師",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 16.7
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 20.85
+    },
+    {
+      "player": "純法師",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 15
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 25.95
+    },
+    {
+      "player": "純法師",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 11.6
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 9.3
+    },
+    {
+      "player": "純法師",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 17.6
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 27.45
+    },
+    {
+      "player": "純法師",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 16
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 15.85
+    },
+    {
+      "player": "純法師",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 11.55
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 11.1
+    },
+    {
+      "player": "純法師",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 9.35
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 11.55
+    },
+    {
+      "player": "純法師",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 12.7
+    },
+    {
+      "player": "自然治療",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 13.9
+    },
+    {
+      "player": "純法師",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 11.55
+    },
+    {
+      "player": "自然治療",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 10.9
+    },
+    {
+      "player": "純法師",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 23.1
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 14.1
+    },
+    {
+      "player": "純法師",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 12.75
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 21.5
+    },
+    {
+      "player": "純法師",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 14.4
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 9.9
+    },
+    {
+      "player": "純法師",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 13.95
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 10.65
+    },
+    {
+      "player": "純法師",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 13.9
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 14.8
+    },
+    {
+      "player": "純法師",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 28.4
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 20.05
+    },
+    {
+      "player": "純法師",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 11.55
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "純法師",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 16.3
+    },
+    {
+      "player": "純法師",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 14.95
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "純法師",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 17.35
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 29.35
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 30.5
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 43.25
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 31
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 56.6
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 48.4
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 44.95
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 17.35
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 19.45
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 16.25
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 19.1
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "自然治療",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 41.65
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 38.05
+    },
+    {
+      "player": "自然治療",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 32.35
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 50.55
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 48.4
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 51.4
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 42.6
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 27.55
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 33.05
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 30.1
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 28.85
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 34.95
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 41.85
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 39.25
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 54.2
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "射手守護者",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 49.8
+    },
+    {
+      "player": "射手守護者",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 51.85
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "射手守護者",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 59.9
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 30
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 23.05
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 31.75
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 32.8
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 13.9
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 9.7
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 8.25
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 9.1
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 16.8
+    },
+    {
+      "player": "自然治療",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 15.85
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 18.65
+    },
+    {
+      "player": "自然治療",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 24.65
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 24.85
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 39.85
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 21.55
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 25.65
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 14.55
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 17.35
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 12.8
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 12.75
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 20.3
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 14.35
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 20.5
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 16.3
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 37
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "烈焰持續傷害",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 44.95
+    },
+    {
+      "player": "烈焰持續傷害",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 35
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "烈焰持續傷害",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 47.2
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 9.8
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 13.9
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 12.75
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 14.15
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 26.55
+    },
+    {
+      "player": "自然治療",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 23.65
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 28.5
+    },
+    {
+      "player": "自然治療",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 25.95
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 27.6
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 47.6
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 34.4
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 21.55
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 19.35
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 18.95
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 20.2
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 24.4
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 32.5
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 20.4
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "霜月控制",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 32.15
+    },
+    {
+      "player": "霜月控制",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "霜月控制",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 10.5
+    },
+    {
+      "player": "自然治療",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 10.25
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 9.55
+    },
+    {
+      "player": "自然治療",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 10.65
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 12.9
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 10.45
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 16.85
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 10
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 29.05
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 21.3
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 18.5
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 17.35
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 14.25
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 13.3
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 53
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 11.55
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 11
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "雷霆爆發",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 11
+    },
+    {
+      "player": "雷霆爆發",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 13.35
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "雷霆爆發",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 14.5
+    },
+    {
+      "player": "自然治療",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 20.8
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 32.8
+    },
+    {
+      "player": "自然治療",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 28.85
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 25.35
+    },
+    {
+      "player": "自然治療",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 18
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 33
+    },
+    {
+      "player": "自然治療",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 43.25
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 20.8
+    },
+    {
+      "player": "自然治療",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 29.25
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 17.25
+    },
+    {
+      "player": "自然治療",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 16.1
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 17.45
+    },
+    {
+      "player": "自然治療",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "自然治療",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 49
+    },
+    {
+      "player": "自然治療",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 38
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "自然治療",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 38.55
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 24.7
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 17.35
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 24.2
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 19.1
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 40.45
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 21.35
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 42.6
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 44.15
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "深淵吸血",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "深淵吸血",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "深淵吸血",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 23.65
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 25.3
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 52.6
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 38.65
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "星辰技能",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 39.15
+    },
+    {
+      "player": "星辰技能",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 59.9
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "星辰技能",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 60
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "多羈絆混合",
+      "seed": 11,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "黃金經濟",
+      "seed": 11,
+      "winner": "player",
+      "seconds": 31.2
+    },
+    {
+      "player": "黃金經濟",
+      "enemy": "多羈絆混合",
+      "seed": 97,
+      "winner": "enemy",
+      "seconds": 60
+    },
+    {
+      "player": "多羈絆混合",
+      "enemy": "黃金經濟",
+      "seed": 97,
+      "winner": "player",
+      "seconds": 60
+    }
+  ]
+}

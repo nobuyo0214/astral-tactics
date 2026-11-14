@@ -119,7 +119,7 @@ describe("商店及有限卡池", () => {
       s.shop.slots.every((slot) => characterById[slot.characterId!].cost === 1),
     ).toBe(true);
     s.shop.slots = [];
-    for (const c of characters) s.pool[c.id] = c.cost === 5 ? 1 : 0;
+    for (const c of characters) s.pool[c.id] = c.id === "judge" ? 1 : 0;
     refillShop(s);
     expect(s.shop.slots.filter((x) => x.characterId)).toHaveLength(1);
     expect(s.shop.slots.find((x) => x.characterId)?.characterId).toBe("judge");
@@ -185,12 +185,10 @@ describe("備戰席、升星與原子性", () => {
     const units = [
       owned(0, "flame", 1, true),
       { ...owned(1), location: { zone: "bench" as const, slot: 0 } },
-      ...characters
-        .slice(1, 9)
-        .map((c, i) => ({
-          ...owned(i + 2, c.id),
-          location: { zone: "bench" as const, slot: i + 1 },
-        })),
+      ...characters.slice(1, 9).map((c, i) => ({
+        ...owned(i + 2, c.id),
+        location: { zone: "bench" as const, slot: i + 1 },
+      })),
     ];
     const r = new Run(fixture(units));
     const result = r.buy(0);
@@ -612,12 +610,10 @@ describe("補充資產與數值邊界", () => {
   it("滿席時可跨區交換，但移回無空格時安全拒絕", () => {
     const units = [
       owned(0, "flame", 1, true),
-      ...characters
-        .slice(1, 10)
-        .map((c, i) => ({
-          ...owned(i + 1, c.id),
-          location: { zone: "bench" as const, slot: i },
-        })),
+      ...characters.slice(1, 10).map((c, i) => ({
+        ...owned(i + 1, c.id),
+        location: { zone: "bench" as const, slot: i },
+      })),
     ];
     const r = new Run(fixture(units));
     const before = structuredClone(r.state);
@@ -696,15 +692,13 @@ describe("等級上限與星級技能回歸", () => {
         }).ok,
       ).toBe(true);
     expect(boardPlacements(r.state)).toHaveLength(9);
-    const enemy = characters
-      .slice(0, 9)
-      .map((c, i) => ({
-        id: `e${i}`,
-        characterId: c.id,
-        team: "enemy" as const,
-        x: i % 7,
-        y: Math.floor(i / 7),
-      }));
+    const enemy = characters.slice(0, 9).map((c, i) => ({
+      id: `e${i}`,
+      characterId: c.id,
+      team: "enemy" as const,
+      x: i % 7,
+      y: Math.floor(i / 7),
+    }));
     const b = new Battle([...boardPlacements(r.state), ...enemy]);
     b.speed = 4;
     for (let i = 0; i < 301 && !b.result; i++) b.advance(0.05);

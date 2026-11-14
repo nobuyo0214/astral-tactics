@@ -33,9 +33,9 @@ html:has(.game-view) {
   margin: 0 auto;
 }
 .run-arena {
-  grid-template-rows: var(--header-h) minmax(0, 1fr) 22px var(--bench-h) var(
-      --shop-h
-    ) 16px;
+  grid-template-rows:
+    var(--header-h) minmax(0, 1fr) 22px var(--bench-h) var(--shop-h)
+    16px;
 }
 .free-arena {
   grid-template-rows: 52px minmax(0, 1fr) 108px 42px;
@@ -199,7 +199,7 @@ html:has(.game-view) {
 }
 .info-tabs {
   display: grid;
-  grid-template-columns: 1fr 0.7fr 1.2fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   flex-shrink: 0;
 }
@@ -874,4 +874,96 @@ html:has(.game-view) {
 }
 .info-popover button {
   float: right;
+}
+/* P3: paged, no-scroll trait summaries and viewport-clamped detail tooltips. */
+.trait-team,
+.trait-pages,
+.free-tabs,
+.roster-pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.trait-team button,
+.free-tabs button {
+  flex: 1;
+}
+.trait-caption {
+  font-size: 12px;
+  margin: 8px 0;
+  color: #9cacc5;
+}
+.trait-list {
+  display: grid;
+  gap: 5px;
+}
+.arena .trait-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+  text-align: left;
+  min-height: 31px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+.trait-row strong {
+  font-weight: 500;
+}
+.trait-row small {
+  font-size: 12px;
+}
+.trait-row.inactive {
+  opacity: 0.58;
+}
+.trait-row.active {
+  border-color: #b69a61;
+  background: #383044;
+}
+.trait-pages {
+  justify-content: center;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.trait-pages button {
+  min-height: 28px;
+  padding: 2px 12px;
+}
+.trait-team .active {
+  border-color: #d1b47c;
+}
+.trait-tooltip {
+  position: fixed;
+  z-index: 30;
+  width: min(420px, calc(100vw - 20px));
+  padding: 16px;
+  border: 1px solid #bc9f6b;
+  border-radius: 8px;
+  background: #161e32fa;
+  box-shadow: 0 14px 45px #0009;
+  pointer-events: none;
+  font-size: 13px;
+}
+.trait-tooltip h3 {
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+.trait-tooltip p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 6px 0;
+}
+.roster-pages {
+  height: 26px;
+  font-size: 12px;
+}
+.free-tabs {
+  margin-bottom: 8px;
+}
+#free-levels h2 {
+  font-size: 18px;
+  margin: 8px 0;
+}
+#free-levels .level {
+  margin: 6px 0;
 }

@@ -49,3 +49,16 @@ export function nextStep(
   }
   return null;
 }
+
+export function combatTargets(u: Unit, units: Unit[]): Unit[] {
+  const foes = targets(u, units);
+  if (!u.summon && u.data.class === "刺客" && u.counters.attacks === 0)
+    foes.sort(
+      (a, b) =>
+        (u.team === "player" ? a.y - b.y : b.y - a.y) ||
+        distance(u, a) - distance(u, b) ||
+        a.hp - b.hp ||
+        a.id.localeCompare(b.id),
+    );
+  return foes;
+}

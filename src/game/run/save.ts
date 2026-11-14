@@ -1,4 +1,8 @@
-import { characterById, characters } from "../data/characters";
+import {
+  characterById,
+  characters,
+  legacyCharacterIds,
+} from "../data/characters";
 import { inside, key } from "../ai/grid";
 import { copiesForStar, POOL_SIZE, XP_REQUIRED } from "./config";
 import type { RunState, SaveData } from "./types";
@@ -24,13 +28,19 @@ function validResult(v: unknown): boolean {
     ["player", "enemy", "draw"].includes(v.winner) &&
     typeof v.reason === "string" &&
     ["elimination", "timeout"].includes(v.reason) &&
+    (v.traitGold === undefined || integer(v.traitGold, 0, 2)) &&
     finite(v.time, 0, 60) &&
     integer(v.playerAlive, 0, 9) &&
     integer(v.enemyAlive, 0, 9) &&
     ["damage", "taken", "healing"].every((k) => finite(v[k]))
   );
 }
-export function validRun(value: unknown): value is RunState {
+export function validRun(value: unknown, legacy = false): value is RunState {
+  const catalog = legacy
+    ? characters.filter((c) =>
+        (legacyCharacterIds as readonly string[]).includes(c.id),
+      )
+    : characters;
   if (!object(value)) return false;
   const {
     player: p,
@@ -66,11 +76,13 @@ export function validRun(value: unknown): value is RunState {
       ) ||
       !integer(i.interest, 0, 5) ||
       !integer(i.streak, 0, 3) ||
+      (i.gold !== undefined && !integer(i.gold, 0, 2)) ||
       i.total !==
         (i.base as number) +
           (i.interest as number) +
           (i.streak as number) +
-          (i.special as number)
+          (i.special as number) +
+          (typeof i.gold === "number" ? i.gold : 0)
     )
       return false;
   }
@@ -114,7 +126,7 @@ export function validRun(value: unknown): value is RunState {
     !Array.isArray(shop.slots) ||
     shop.slots.length !== 5 ||
     !object(pool) ||
-    Object.keys(pool).length !== characters.length
+    Object.keys(pool).length !== catalog.length
   )
     return false;
   if (
@@ -123,7 +135,7 @@ export function validRun(value: unknown): value is RunState {
   )
     return false;
   if (!Array.isArray(units) || units.length > 18) return false;
-  const stock = Object.fromEntries(characters.map((c) => [c.id, 0])),
+  const stock = Object.fromEntries(catalog.map((c) => [c.id, 0])),
     ids = new Set<string>(),
     cells = new Set<string>(),
     slots = new Set<number>();
@@ -136,7 +148,7 @@ export function validRun(value: unknown): value is RunState {
       ids.has(u.id) ||
       !integer(Number(u.id.slice(1)), 0, (value.nextUnitId as number) - 1) ||
       typeof u.characterId !== "string" ||
-      !Object.hasOwn(characterById, u.characterId) ||
+      !catalog.some((c) => c.id === u.characterId) ||
       !integer(u.starLevel, 1, 3) ||
       u.starLevel > stats.highestStar ||
       !object(u.location)
@@ -167,12 +179,12 @@ export function validRun(value: unknown): value is RunState {
       !object(slot) ||
       (slot.characterId !== null &&
         (typeof slot.characterId !== "string" ||
-          !Object.hasOwn(characterById, slot.characterId)))
+          !catalog.some((c) => c.id === slot.characterId)))
     )
       return false;
     if (typeof slot.characterId === "string") stock[slot.characterId]++;
   }
-  for (const c of characters) {
+  for (const c of catalog) {
     const remaining = pool[c.id];
     if (
       !integer(remaining, 0, POOL_SIZE[c.cost]) ||
@@ -185,7 +197,7 @@ export function validRun(value: unknown): value is RunState {
 export function encodeSave(state: Readonly<RunState>): string {
   const run = structuredClone(state);
   if (run.round.phase === "combat") run.round.phase = "preparation";
-  return JSON.stringify({ version: 2, run } satisfies SaveData);
+  return JSON.stringify({ version: 3, run } satisfies SaveData);
 }
 export type LoadResult =
   | { status: "loaded"; state: RunState }
@@ -199,11 +211,22 @@ export function decodeSave(raw: string | null): LoadResult {
     if (raw.length > 1_000_000) throw new Error();
     const data: unknown = JSON.parse(raw);
     if (!object(data)) throw new Error();
-    if (data.version !== 2)
+    if (data.version !== 2 && data.version !== 3)
       return {
         status: "incompatible",
         message: "存檔版本不相容，請重新開始經營試煉。",
       };
+    if (
+      data.version === 2 &&
+      object(data.run) &&
+      object(data.run.pool) &&
+      Object.keys(data.run.pool).length === 12
+    ) {
+      if (!validRun(data.run, true)) throw new Error();
+      const pool = data.run.pool;
+      for (const c of characters)
+        if (!Object.hasOwn(pool, c.id)) pool[c.id] = POOL_SIZE[c.cost];
+    }
     if (!validRun(data.run)) throw new Error();
     const state = structuredClone(data.run);
     if (state.round.phase === "combat") state.round.phase = "preparation";

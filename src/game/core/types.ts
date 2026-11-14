@@ -35,7 +35,16 @@ export type SkillKind =
   | "chain"
   | "blast"
   | "ward"
-  | "execute";
+  | "execute"
+  | "leech"
+  | "summon"
+  | "energy"
+  | "multiheal"
+  | "froststrike"
+  | "stun"
+  | "slowarea"
+  | "multihit"
+  | "areaward";
 export interface Skill {
   id: string;
   name: string;
@@ -51,6 +60,17 @@ export interface Placement extends Cell {
   team: Team;
 }
 export interface Unit extends Placement {
+  statuses: import("../traits/types").StatusEffect[];
+  modifier: import("../traits/types").BattleModifier;
+  counters: {
+    attacks: number;
+    casts: number;
+    damageCasts: number;
+    heals: number;
+    frostHits: number;
+    freezeReady: number;
+  };
+  summon?: { ownerId: string; expires: number };
   data: Character;
   hp: number;
   mana: number;
@@ -68,7 +88,17 @@ export interface Unit extends Placement {
 export interface BattleEvent {
   id: number;
   time: number;
-  kind: "attack" | "damage" | "heal" | "shield" | "skill" | "death" | "move";
+  kind:
+    | "attack"
+    | "damage"
+    | "heal"
+    | "shield"
+    | "skill"
+    | "death"
+    | "move"
+    | "trait"
+    | "status"
+    | "summon";
   source: string;
   target: string;
   value: number;
@@ -77,6 +107,7 @@ export interface BattleEvent {
   y: number;
 }
 export interface Result {
+  traitGold?: number;
   winner: Team | "draw";
   reason: "elimination" | "timeout";
   time: number;

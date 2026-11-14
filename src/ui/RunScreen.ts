@@ -1,3 +1,5 @@
+import { TraitPanel } from "./TraitPanel";
+import { TraitRegistry } from "../game/traits/registry";
 import { observeBoardViewport } from "./boardViewport";
 import Phaser from "phaser";
 import {
@@ -30,6 +32,7 @@ export class RunScreen {
   private game: Phaser.Game | null = null;
   private releaseViewport: () => void = () => {};
   private infoTab = "unit";
+  private traitPanel: TraitPanel | null = null;
   private onKey = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
       this.el("run-overlay").innerHTML = "";
@@ -52,9 +55,9 @@ export class RunScreen {
     document.body.classList.add("game-view");
     document.addEventListener("keydown", this.onKey);
     this.app.innerHTML = `<div class="stardust"></div><main class="arena run-arena">
-      <header class="run-header"><div class="game-brand">✧ 星界戰棋 <small>P2 經營試煉</small></div><h1 id="run-title"></h1><section id="run-top" class="run-top"></section><span id="run-phase" class="badge"></span></header>
+      <header class="run-header"><div class="game-brand">✧ 星界戰棋 <small>P3 經營試煉</small></div><h1 id="run-title"></h1><section id="run-top" class="run-top"></section><span id="run-phase" class="badge"></span></header>
       <section class="battle-layout">
-        <aside class="unit-sidebar panel"><div class="info-tabs" role="tablist" aria-label="戰術資訊"><button data-info-tab="unit" role="tab">角色資訊</button><button data-info-tab="skill" role="tab">技能</button><button data-info-tab="economy" role="tab">經濟與機率</button></div><section id="run-info" data-info-panel="unit"></section><section id="run-skill" data-info-panel="skill" hidden></section><section data-info-panel="economy" hidden><div id="run-economy"></div><div id="run-odds"></div></section></aside>
+        <aside class="unit-sidebar panel"><div class="info-tabs" role="tablist" aria-label="戰術資訊"><button data-info-tab="unit" role="tab">角色</button><button data-info-tab="skill" role="tab">技能</button><button data-info-tab="economy" role="tab">經濟</button><button data-info-tab="traits" role="tab">羈絆</button></div><section data-info-panel="traits" id="run-traits" hidden></section><section id="run-info" data-info-panel="unit"></section><section id="run-skill" data-info-panel="skill" hidden></section><section data-info-panel="economy" hidden><div id="run-economy"></div><div id="run-odds"></div></section></aside>
         <section class="board-panel"><div class="board-meta"><span id="run-counts"></span><span id="run-timer">0.00 / 60.00</span></div><div id="run-board" class="board-viewport" aria-label="經營試煉棋盤"></div><div class="board-bottom"><span>敵方上四排 / 我方下四排</span><span>7 × 8 星界戰場</span></div></section>
         <aside class="command-sidebar panel"><h2>試煉指令</h2><div id="shop-controls"></div><div class="speed">${[1, 2, 4].map((n) => `<button data-run-speed="${n}" class="${n === 1 ? "active" : ""}">${n}×</button>`).join("")}${btn("run-pause", "暫停", true)}</div><div class="unit-actions">${btn("run-to-bench", "移回備戰席")}${btn("run-sell", "出售角色")}</div>${btn("run-start", "開始戰鬥 ↗", false, "primary")}${btn("run-results", "查看結算", true)}${btn("run-home", "返回主選單")}<p id="run-log">三個同星角色自動合成。<br>可預先選擇戰鬥速度。</p></aside>
       </section>
@@ -67,6 +70,7 @@ export class RunScreen {
       .querySelectorAll<HTMLButtonElement>("[data-info-tab]")
       .forEach((b) => (b.onclick = () => this.setTab(b.dataset.infoTab!)));
     this.setTab(this.infoTab);
+    this.traitPanel = new TraitPanel(this.el("run-traits"));
     this.el("run-results").onclick = () => this.overlay();
     this.el("run-home").onclick = () => {
       this.destroy();
@@ -225,6 +229,14 @@ export class RunScreen {
     }
   }
   private render() {
+    this.traitPanel?.hide();
+    this.traitPanel?.update(
+      [
+        ...boardPlacements(this.run.state),
+        ...roundEnemies(this.run.state.round.number),
+      ],
+      this.run.battle?.traits ?? null,
+    );
     const s = this.run.state,
       prep = s.round.phase === "preparation",
       income = s.economy.lastIncome;
@@ -248,9 +260,13 @@ export class RunScreen {
     this.el("run-shop").innerHTML = s.shop.slots
       .map((slot, index) => {
         const c = slot.characterId ? characterById[slot.characterId] : null;
-        return `<article class="shop-card ${c ? "" : "sold"}">${c ? `<div class="shop-sigil" style="color:#${c.color.toString(16)}">${c.symbol}</div><div class="shop-text"><h3>${c.name} <span class="star">★</span></h3><p>${c.faction} / ${c.class}</p><small>${c.cost} 金幣 · 持有 ${ownedCopies(s, c.id)} 張</small></div><button data-buy="${index}" ${!prep || s.economy.gold < c.cost ? "disabled" : ""}>${s.economy.gold < c.cost ? "金幣不足" : `購買 ${c.cost}金`}</button>` : '<span class="sold-mark">✧</span><p>已售出／卡池耗盡</p>'}</article>`;
+        return `<article class="shop-card ${c ? "" : "sold"}">${c ? `<div class="shop-sigil" style="color:#${c.color.toString(16)}">${c.symbol}</div><div class="shop-text"><h3>${c.name} <span class="star">★</span></h3><p>${TraitRegistry.find((t) => t.name === c.faction)!.icon} ${TraitRegistry.find((t) => t.name === c.class)!.icon} · ${c.class}</p><small>${c.cost} 金幣 · 持有 ${ownedCopies(s, c.id)} 張</small></div><button data-buy="${index}" ${!prep || s.economy.gold < c.cost ? "disabled" : ""}>${s.economy.gold < c.cost ? "金幣不足" : `購買 ${c.cost}金`}</button>` : '<span class="sold-mark">✧</span><p>已售出／卡池耗盡</p>'}</article>`;
       })
       .join("");
+    this.app.querySelectorAll<HTMLElement>(".shop-card").forEach((el, i) => {
+      const id = s.shop.slots[i].characterId;
+      if (id) this.traitPanel?.bindCard(el, id);
+    });
     this.el("shop-refresh").onclick = () =>
       this.execute(() => this.run.refresh());
     this.el("shop-lock").onclick = () =>
@@ -333,6 +349,21 @@ export class RunScreen {
       star = u?.starLevel ?? combat?.starLevel ?? enemy?.starLevel ?? 1,
       c = effectiveCharacter(characterId, star),
       skill = effectiveSkill(c.skillId, star);
+    if (combat && this.run.battle) {
+      Object.assign(c, {
+        maxHP: combat.data.maxHP,
+        attack: this.run.battle.attackValue(combat),
+        defense: this.run.battle.defenseValue(combat),
+        attackSpeed: Number(this.run.battle.attackSpeed(combat).toFixed(2)),
+      });
+    }
+    if (combat?.summon) {
+      this.el("run-info").innerHTML =
+        `<h2>星契靈體</h2><p>生命 ${Math.round(combat.hp)} / ${combat.data.maxHP}<br>攻擊 ${combat.data.attack} · 防禦 ${combat.data.defense}<br>剩餘壽命 ${Math.max(0, combat.summon.expires - (this.run.battle?.time ?? 0)).toFixed(1)} 秒</p><p>可被攻擊，不計羈絆／上場人數／超時存活數，不施放技能。</p>`;
+      this.el("run-skill").innerHTML =
+        "<h2>星契靈體</h2><p>沒有技能，最多存活12秒。</p>";
+      return;
+    }
     const strength = Math.round(STAR_SKILL[star - 1] * 100);
     this.el("run-info").innerHTML =
       `<div class="eyebrow">${u ? "我方持有角色" : "星旅者檔案"} · ${c.cost} 費</div><h2>${c.name} <span class="star">${"★".repeat(star)}</span></h2><p>${c.faction} / ${c.class}</p><dl class="unit-stats">${[
@@ -385,23 +416,32 @@ export class RunScreen {
     );
     const s = this.run.state,
       b = this.run.battle;
-    this.el("run-timer").textContent = `${(b?.time ?? 0).toFixed(2)} / 60.00`;
-    this.el("run-counts").textContent =
-      `我方 ${b ? b.units.filter((u) => u.team === "player" && u.hp > 0).length : boardPlacements(s).length} / ${s.player.level} · 敵方 ${b ? b.units.filter((u) => u.team === "enemy" && u.hp > 0).length : roundEnemies(s.round.number).length}`;
-    this.el("run-phase").textContent = b?.paused
-      ? "已暫停"
-      : {
-          preparation: "準備階段",
-          combat: "戰鬥階段",
-          settlement: "回合結算",
-          completed: "試煉完成",
-          gameOver: "挑戰失敗",
-        }[s.round.phase];
+    const set = (id: string, value: string) => {
+      const el = this.el(id);
+      if (el.textContent !== value) el.textContent = value;
+    };
+    set("run-timer", `${(b?.time ?? 0).toFixed(2)} / 60.00`);
+    set(
+      "run-counts",
+      `我方 ${b ? b.units.filter((u) => u.team === "player" && u.hp > 0).length : boardPlacements(s).length} / ${s.player.level} · 敵方 ${b ? b.units.filter((u) => u.team === "enemy" && u.hp > 0).length : roundEnemies(s.round.number).length}`,
+    );
+    set(
+      "run-phase",
+      b?.paused
+        ? "已暫停"
+        : {
+            preparation: "準備階段",
+            combat: "戰鬥階段",
+            settlement: "回合結算",
+            completed: "試煉完成",
+            gameOver: "挑戰失敗",
+          }[s.round.phase],
+    );
     (this.el("run-results") as HTMLButtonElement).disabled =
       s.round.phase === "preparation" || s.round.phase === "combat";
     const pause = this.el("run-pause") as HTMLButtonElement;
     pause.disabled = s.round.phase !== "combat";
-    pause.textContent = b?.paused ? "繼續" : "暫停";
+    set("run-pause", b?.paused ? "繼續" : "暫停");
   }
   private tick(delta: number) {
     if (this.destroyed) return;
@@ -436,7 +476,7 @@ export class RunScreen {
     const r = s.round.lastResult!,
       income = s.economy.lastIncome!,
       final = phase === "completed" || phase === "gameOver";
-    host.innerHTML = `<div class="modal-backdrop"><section class="result panel" role="dialog" aria-modal="true" aria-label="${final ? "經營試煉總結" : "經營回合結算"}"><button id="close-run-result" class="modal-close" aria-label="關閉結算">×</button><div class="eyebrow">${final ? "RUN COMPLETE" : "ROUND SETTLEMENT"} / ${r.reason === "timeout" ? "超時結算" : "全滅結算"}</div><div class="crest">✧</div><h1>${phase === "completed" ? "試煉完成" : phase === "gameOver" ? "挑戰失敗" : r.winner === "player" ? "本回合勝利" : r.winner === "enemy" ? "本回合失敗" : "本回合平局"}</h1><p>第 ${s.round.number} 回合 · ${r.time.toFixed(2)} 秒 · 雙方存活 ${r.playerAlive} / ${r.enemyAlive}</p><div class="result-stats"><span>玩家 HP<b>${s.player.hp}</b></span><span>金幣<b>${s.economy.gold}</b></span><span>等級<b>Lv.${s.player.level}</b></span><span>本回合收入<b>+${income.total}</b></span><span>造成傷害<b>${r.damage}</b></span></div><p>基本 ${income.base} + 利息 ${income.interest} + 連勝／連敗 ${income.streak} + 特殊 ${income.special}</p>${final ? `<div class="result-stats"><span>完成回合<b>${s.stats.completedRounds}</b></span><span>最高連勝<b>${s.stats.highestWinStreak}</b></span><span>累計傷害<b>${s.stats.totalDamage}</b></span><span>最高星級<b>${"★".repeat(s.stats.highestStar)}</b></span></div><h3>最終隊伍配置</h3><div class="damage-list">${s.units.map((u) => `<p>${characterById[u.characterId].name} ${"★".repeat(u.starLevel)}<span>${u.location.zone === "board" ? `${String.fromCharCode(65 + u.location.cell.x)}${u.location.cell.y + 1}` : `備戰席 ${u.location.slot + 1}`}</span></p>`).join("") || "<p>無持有角色</p>"}</div>${btn("run-restart", "重新開始", false, "primary")}` : btn("run-next", "前往下一回合", false, "primary")}${btn("run-result-home", "返回主選單")}</section></div>`;
+    host.innerHTML = `<div class="modal-backdrop"><section class="result panel" role="dialog" aria-modal="true" aria-label="${final ? "經營試煉總結" : "經營回合結算"}"><button id="close-run-result" class="modal-close" aria-label="關閉結算">×</button><div class="eyebrow">${final ? "RUN COMPLETE" : "ROUND SETTLEMENT"} / ${r.reason === "timeout" ? "超時結算" : "全滅結算"}</div><div class="crest">✧</div><h1>${phase === "completed" ? "試煉完成" : phase === "gameOver" ? "挑戰失敗" : r.winner === "player" ? "本回合勝利" : r.winner === "enemy" ? "本回合失敗" : "本回合平局"}</h1><p>第 ${s.round.number} 回合 · ${r.time.toFixed(2)} 秒 · 雙方存活 ${r.playerAlive} / ${r.enemyAlive}</p><div class="result-stats"><span>玩家 HP<b>${s.player.hp}</b></span><span>金幣<b>${s.economy.gold}</b></span><span>等級<b>Lv.${s.player.level}</b></span><span>本回合收入<b>+${income.total}</b></span><span>造成傷害<b>${r.damage}</b></span></div><p>基本 ${income.base} + 利息 ${income.interest} + 連勝／連敗 ${income.streak} + 特殊 ${income.special} + 黃金商會 ${income.gold ?? 0}</p>${final ? `<div class="result-stats"><span>完成回合<b>${s.stats.completedRounds}</b></span><span>最高連勝<b>${s.stats.highestWinStreak}</b></span><span>累計傷害<b>${s.stats.totalDamage}</b></span><span>最高星級<b>${"★".repeat(s.stats.highestStar)}</b></span></div><h3>最終隊伍配置</h3><div class="damage-list">${s.units.map((u) => `<p>${characterById[u.characterId].name} ${"★".repeat(u.starLevel)}<span>${u.location.zone === "board" ? `${String.fromCharCode(65 + u.location.cell.x)}${u.location.cell.y + 1}` : `備戰席 ${u.location.slot + 1}`}</span></p>`).join("") || "<p>無持有角色</p>"}</div>${btn("run-restart", "重新開始", false, "primary")}` : btn("run-next", "前往下一回合", false, "primary")}${btn("run-result-home", "返回主選單")}</section></div>`;
     this.el("close-run-result").onclick = () => {
       host.innerHTML = "";
       this.el("run-results").focus();
@@ -463,6 +503,7 @@ export class RunScreen {
     document.body.classList.remove("battle-paused", "game-view");
     document.removeEventListener("keydown", this.onKey);
     this.releaseViewport();
+    this.traitPanel?.destroy();
     if (this.destroyed) return;
     this.destroyed = true;
     this.game?.destroy(true);

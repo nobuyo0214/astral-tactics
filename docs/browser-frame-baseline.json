@@ -1,0 +1,21 @@
+{
+  "environment": "Linux headless Chromium software WebGL, 8 summoner/frost vs round10, 4x",
+  "reports": [
+    {
+      "quality": "high",
+      "samples": 90,
+      "medianMs": 133.29999999999927,
+      "p95Ms": 150.10000000000036,
+      "timer": "6.25 / 60.00",
+      "skillLog": "5.8s 年輪之誓 · 5.8s 墜星術"
+    },
+    {
+      "quality": "animations off / low",
+      "samples": 90,
+      "medianMs": 100,
+      "p95Ms": 133.29999999999927,
+      "timer": "6.25 / 60.00",
+      "skillLog": "5.8s 年輪之誓 · 5.8s 墜星術"
+    }
+  ]
+}

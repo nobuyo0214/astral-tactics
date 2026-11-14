@@ -1,3 +1,4 @@
+import { TraitPanel } from "./ui/TraitPanel";
 import { observeBoardViewport } from "./ui/boardViewport";
 import { RunScreen } from "./ui/RunScreen";
 import { Run, createRun } from "./game/run/run";
@@ -15,6 +16,8 @@ import type { Cell } from "./game/core/types";
 const app = document.querySelector<HTMLDivElement>("#app")!;
 const settings = loadSettings();
 let runScreen: RunScreen | null = null;
+let freeTraits: TraitPanel | null = null;
+let rosterPage = 0;
 let releaseBoardViewport: () => void = () => {};
 let game: Phaser.Game | null = null,
   battle: Battle | null = null,
@@ -34,6 +37,8 @@ function bind(id: string, fn: () => void) {
 function dispose() {
   document.body.classList.remove("battle-paused", "game-view");
   releaseBoardViewport();
+  freeTraits?.destroy();
+  freeTraits = null;
   runScreen?.destroy();
   runScreen = null;
   game?.destroy(true);
@@ -41,7 +46,7 @@ function dispose() {
   battle = null;
 }
 function shell(content: string) {
-  app.innerHTML = `<div class="stardust"></div>${content}<footer>ASTRAL TACTICS <span>原創策略自走棋 · P2 ALPHA</span></footer>`;
+  app.innerHTML = `<div class="stardust"></div>${content}<footer>ASTRAL TACTICS <span>原創策略自走棋 · P3 ALPHA</span></footer>`;
   document.body.classList.toggle("reduced-motion", !settings.animations);
 }
 function menu() {
@@ -53,7 +58,7 @@ function menu() {
     saved = { status: "unavailable", message: "瀏覽器不允許存取存檔。" };
   }
   shell(
-    `<main class="menu"><div class="eyebrow">THE SHATTERED CONSTELLATION</div><div class="crest">✧</div><h1>星界戰棋</h1><p class="english">ASTRAL TACTICS</p><p class="intro">星環破碎之後，每一次佈陣，都是重寫命運的起點。</p><nav>${button("run-new", "經營試煉 <span>P2 · 全新旅程 ↗</span>", "primary")}${button("run-continue", "繼續經營 <span>本機存檔</span>")}${button("play", "自由戰鬥 <span>P1 · 開始遊戲 ↗</span>")}${button("codex", "角色圖鑑 <span>12 位星旅者</span>")}${button("settings", "遊戲設定 <span>⚙</span>")}${button("help", "操作說明 <span>?</span>")}</nav><small>P2 Alpha · 十回合經營試煉 / 自由戰鬥</small><p class="menu-save" id="menu-save"></p></main>`,
+    `<main class="menu"><div class="eyebrow">THE SHATTERED CONSTELLATION</div><div class="crest">✧</div><h1>星界戰棋</h1><p class="english">ASTRAL TACTICS</p><p class="intro">星環破碎之後，每一次佈陣，都是重寫命運的起點。</p><nav>${button("run-new", "經營試煉 <span>P3 · 全新旅程 ↗</span>", "primary")}${button("run-continue", "繼續經營 <span>本機存檔</span>")}${button("play", "自由戰鬥 <span>P1 · 開始遊戲 ↗</span>")}${button("codex", "角色圖鑑 <span>32 位星旅者</span>")}${button("settings", "遊戲設定 <span>⚙</span>")}${button("help", "操作說明 <span>?</span>")}</nav><small>P3 Alpha · 十回合經營試煉 / 自由戰鬥</small><p class="menu-save" id="menu-save"></p></main>`,
   );
   const openRun = (run: Run) => {
     dispose();
@@ -93,7 +98,7 @@ function page(title: string, body: string) {
 function codex() {
   page(
     "星旅者圖鑑",
-    `<p class="muted">12 名原創角色 · 一星基礎數值 · 可於 P2 商店購買及升星</p><div class="codex">${characters.map((c) => `<article class="character"><div class="sigil" style="color:#${c.color.toString(16)}">${c.symbol}</div><small>${c.faction} / ${c.class} · ${c.cost} 費 · ★</small><h2>${c.name}</h2><p>${c.description}</p><div class="stats">HP ${c.maxHP} · 攻擊 ${c.attack} · 防禦 ${c.defense}<br>攻速 ${c.attackSpeed} · 射程 ${c.attackRange} · 移速 ${c.moveSpeed}<br>能量 ${c.startingMana} / ${c.maxMana}</div><h3>${skills[c.skillId].name}</h3><p>${skills[c.skillId].description}</p></article>`).join("")}</div>`,
+    `<p class="muted">32 名原創角色 · 一星基礎數值 · 可於 P2 商店購買及升星</p><div class="codex">${characters.map((c) => `<article class="character"><div class="sigil" style="color:#${c.color.toString(16)}">${c.symbol}</div><small>${c.faction} / ${c.class} · ${c.cost} 費 · ★</small><h2>${c.name}</h2><p>${c.description}</p><div class="stats">HP ${c.maxHP} · 攻擊 ${c.attack} · 防禦 ${c.defense}<br>攻速 ${c.attackSpeed} · 射程 ${c.attackRange} · 移速 ${c.moveSpeed}<br>能量 ${c.startingMana} / ${c.maxMana}</div><h3>${skills[c.skillId].name}</h3><p>${skills[c.skillId].description}</p></article>`).join("")}</div>`,
   );
 }
 function settingsPage() {
@@ -162,8 +167,14 @@ function help() {
       .join("")}</div>`,
   );
 }
-function info(id: string) {
-  const c = characterById[id];
+function info(id: string, unitId?: string) {
+  const u = battle?.units.find((u) => u.id === unitId);
+  const c = { ...(u?.data ?? characterById[id]) };
+  if (u && battle) {
+    c.attack = battle.attackValue(u);
+    c.defense = battle.defenseValue(u);
+    c.attackSpeed = Number(battle.attackSpeed(u).toFixed(2));
+  }
   document.getElementById("unit-info")!.innerHTML =
     `<div class="eyebrow">星旅者檔案 · ★ · ${c.cost} 費</div><h2>${c.name}</h2><p>${c.faction} / ${c.class}</p><div class="stats">HP <b>${c.maxHP}</b>　攻擊 <b>${c.attack}</b><br>防禦 <b>${c.defense}</b>　攻速 <b>${c.attackSpeed}</b><br>射程 <b>${c.attackRange}</b>　移速 <b>${c.moveSpeed}</b><br>起始能量 ${c.startingMana} / ${c.maxMana}</div><h3>${skills[c.skillId].name}</h3><p>${skills[c.skillId].description}</p>`;
 }
@@ -174,7 +185,7 @@ function cellClick(cell: Cell, id?: string) {
   if (battle) {
     if (id) {
       const u = battle.units.find((u) => u.id === id);
-      if (u) info(u.characterId);
+      if (u) info(u.characterId, u.id);
     }
     return;
   }
@@ -227,12 +238,36 @@ function prepare() {
   deployment.locked = false;
   lastEvent = -1;
   shell(
-    `<main class="arena free-arena"><header class="arena-header"><a id="home" href="#">✧ 星界戰棋 <small>P1 ALPHA</small></a><div><span class="eyebrow">裂星遠征 / 測試試煉</span><h1 id="round-title">${levels[level].name}</h1></div><div id="phase" class="badge">部署階段</div></header><section class="battle-layout"><aside class="left-rail"><div class="eyebrow">CHOOSE YOUR TRIAL</div><h2>選擇試煉</h2>${levels.map((l, i) => `<button class="level ${i === level ? "active" : ""}" data-level="${i}"><small>${l.subtitle}</small><strong>${l.name}</strong><span>${l.ids.length} 名敵人 ${i === 0 ? "· 入門" : i === 1 ? "· 進階" : "· 挑戰"}</span></button>`).join("")}<div class="panel field-notes"><h3>戰術筆記</h3><p>${levels[level].description}</p><p>守護者在前，射手在後。<br>點選或拖曳配置你的星旅者。</p><div class="legend"><i></i>我方部署區 <i class="red"></i>敵方部署區</div></div></aside><section class="board-panel"><div class="board-meta"><span id="counts">我方 0 / 5 · 敵方 ${enemies(level).length}</span><span id="timer">00.00 / 60.00</span></div><div id="board" class="board-viewport" aria-label="7 欄 8 排戰鬥棋盤"></div><div class="board-bottom"><span>✧ 方格座標 A–G / 1–8</span><span>下半場為我方部署區</span></div></section><aside class="right-rail"><section id="unit-info" class="panel"></section><section class="panel controls"><div class="eyebrow">SIMULATION CLOCK</div><div class="speed">${[1, 2, 4].map((s) => `<button data-speed="${s}" class="${s === 1 ? "active" : ""}">${s}×</button>`).join("")}${button("pause", "暫停")}</div>${button("free-log-toggle", "戰場紀錄")}</section><section class="panel info-popover" id="free-log-panel" role="dialog" aria-label="戰場紀錄" hidden>${button("close-free-log", "關閉 ×")}<h3>戰場紀錄</h3><div id="log" aria-live="off">等待星旅者入場。</div></section></aside></section><section class="roster-panel"><div class="roster-heading"><div><span class="eyebrow">YOUR CONSTELLATION</span><h2>星旅者 / 備戰區 <small>12 名已解鎖</small></h2></div>${button("remove", "移回備戰區")}</div><div class="roster">${characters.map((c) => `<button class="roster-card ${c.id === chosen ? "selected" : ""}" data-char="${c.id}"><span style="color:#${c.color.toString(16)}">${c.symbol}</span><strong>${c.name}</strong><small>${c.class} · ${c.cost} 費 ★</small></button>`).join("")}</div></section><div class="action-bar"><p id="notice" role="status">選擇星旅者，再點擊下半場空格部署。</p><div>${button("reset", "重設部署")}${button("retry", "重新挑戰")}${button("free-results", "查看結算")}${button("start", "開始戰鬥 ↗", "primary")}</div></div></main><div id="result"></div>`,
+    `<main class="arena free-arena"><header class="arena-header"><a id="home" href="#">✧ 星界戰棋 <small>P1 ALPHA</small></a><div><span class="eyebrow">裂星遠征 / 測試試煉</span><h1 id="round-title">${levels[level].name}</h1></div><div id="phase" class="badge">部署階段</div></header><section class="battle-layout"><aside class="left-rail"><div class="free-tabs"><button id="free-levels-tab">試煉</button><button id="free-traits-tab">羈絆</button></div><div id="free-levels"><div class="eyebrow">CHOOSE YOUR TRIAL</div><h2>選擇試煉</h2>${levels.map((l, i) => `<button class="level ${i === level ? "active" : ""}" data-level="${i}"><small>${l.subtitle}</small><strong>${l.name}</strong><span>${l.ids.length} 名敵人 ${i === 0 ? "· 入門" : i === 1 ? "· 進階" : "· 挑戰"}</span></button>`).join("")}<div class="panel field-notes"><h3>戰術筆記</h3><p>${levels[level].description}</p><p>守護者在前，射手在後。<br>點選或拖曳配置你的星旅者。</p><div class="legend"><i></i>我方部署區 <i class="red"></i>敵方部署區</div></div></div><div id="free-traits" hidden></div></aside><section class="board-panel"><div class="board-meta"><span id="counts">我方 0 / 5 · 敵方 ${enemies(level).length}</span><span id="timer">00.00 / 60.00</span></div><div id="board" class="board-viewport" aria-label="7 欄 8 排戰鬥棋盤"></div><div class="board-bottom"><span>✧ 方格座標 A–G / 1–8</span><span>下半場為我方部署區</span></div></section><aside class="right-rail"><section id="unit-info" class="panel"></section><section class="panel controls"><div class="eyebrow">SIMULATION CLOCK</div><div class="speed">${[1, 2, 4].map((s) => `<button data-speed="${s}" class="${s === 1 ? "active" : ""}">${s}×</button>`).join("")}${button("pause", "暫停")}</div>${button("free-log-toggle", "戰場紀錄")}</section><section class="panel info-popover" id="free-log-panel" role="dialog" aria-label="戰場紀錄" hidden>${button("close-free-log", "關閉 ×")}<h3>戰場紀錄</h3><div id="log" aria-live="off">等待星旅者入場。</div></section></aside></section><section class="roster-panel"><div class="roster-heading"><div><span class="eyebrow">YOUR CONSTELLATION</span><h2>星旅者 / 備戰區 <small>32 名已解鎖</small></h2></div><div class="roster-pages">${button("roster-prev", "←")}<span id="roster-page"></span>${button("roster-next", "→")}${button("remove", "移回備戰區")}</div></div><div class="roster">${characters.map((c) => `<button class="roster-card ${c.id === chosen ? "selected" : ""}" data-char="${c.id}"><span style="color:#${c.color.toString(16)}">${c.symbol}</span><strong>${c.name}</strong><small>${c.class} · ${c.cost} 費 ★</small></button>`).join("")}</div></section><div class="action-bar"><p id="notice" role="status">選擇星旅者，再點擊下半場空格部署。</p><div>${button("reset", "重設部署")}${button("retry", "重新挑戰")}${button("free-results", "查看結算")}${button("start", "開始戰鬥 ↗", "primary")}</div></div></main><div id="result"></div>`,
   );
   bind("home", menu);
   document
     .getElementById("home")!
     .addEventListener("click", (e) => e.preventDefault());
+  freeTraits = new TraitPanel(document.getElementById("free-traits")!);
+  bind("free-levels-tab", () => {
+    document.getElementById("free-levels")!.hidden = false;
+    document.getElementById("free-traits")!.hidden = true;
+  });
+  bind("free-traits-tab", () => {
+    document.getElementById("free-levels")!.hidden = true;
+    document.getElementById("free-traits")!.hidden = false;
+  });
+  const showRoster = () => {
+    document
+      .querySelectorAll<HTMLElement>("[data-char]")
+      .forEach((el, i) => (el.hidden = Math.floor(i / 12) !== rosterPage));
+    document.getElementById("roster-page")!.textContent = `${rosterPage + 1}/3`;
+  };
+  bind("roster-prev", () => {
+    rosterPage = (rosterPage + 2) % 3;
+    showRoster();
+  });
+  bind("roster-next", () => {
+    rosterPage = (rosterPage + 1) % 3;
+    showRoster();
+  });
+  showRoster();
   info(chosen);
   document.querySelectorAll<HTMLButtonElement>("[data-char]").forEach(
     (el) =>
@@ -367,6 +402,10 @@ function start() {
   updateHUD();
 }
 function updateHUD() {
+  freeTraits?.update(
+    [...deployment.placements, ...enemies(level)],
+    battle?.traits ?? null,
+  );
   const summary = document.getElementById(
     "free-results",
   ) as HTMLButtonElement | null;
