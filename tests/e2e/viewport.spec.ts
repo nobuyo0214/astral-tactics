@@ -301,7 +301,7 @@ test("P1 自由戰鬥亦維持單畫面與全部操作", async ({ page }) => {
         document.querySelectorAll(
           "canvas,#start,#reset,#retry,#remove,#home,#free-log-toggle,#free-results,[data-char]",
         ),
-      );
+      ).filter((el) => el.getBoundingClientRect().width > 0);
       return {
         count: all.length,
         overflow:

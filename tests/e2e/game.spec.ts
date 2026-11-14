@@ -17,7 +17,7 @@ test("主選單、圖鑑、設定持久化與說明", async ({ page }) => {
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("./");
   await page.getByRole("button", { name: /角色圖鑑/ }).click();
-  await expect(page.locator(".character")).toHaveCount(12);
+  await expect(page.locator(".character")).toHaveCount(32);
   await page.getByRole("button", { name: /返回主選單/ }).click();
   await page.getByRole("button", { name: /遊戲設定/ }).click();
   await page.locator("#sound").uncheck();

@@ -28,6 +28,7 @@ export interface Income {
   interest: number;
   streak: number;
   special: number;
+  gold?: number;
   total: number;
 }
 export interface EconomyState {
@@ -69,7 +70,7 @@ export interface RunState {
   };
 }
 export interface SaveData {
-  version: 2;
+  version: 3;
   run: RunState;
 }
 export interface ActionResult {

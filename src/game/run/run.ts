@@ -185,6 +185,11 @@ export class Run {
         result,
         rounds[s.round.number - 1].specialReward,
       );
+      const gold = result.traitGold ?? 0;
+      if (gold > 0) {
+        income.gold = gold;
+        income.total += gold;
+      }
       s.economy.lastIncome = income;
       s.economy.gold += income.total;
       addXP(s, RULES.naturalXP);

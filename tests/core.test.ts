@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { Battle, STEP } from "../src/game/core/battle";
 import { Deployment } from "../src/game/core/deployment";
-import { characters, skills } from "../src/game/data/characters";
+import {
+  characters,
+  skills,
+  legacyCharacterIds,
+} from "../src/game/data/characters";
 import { enemies } from "../src/game/data/levels";
 import { nextStep, key, targets, inside } from "../src/game/ai/grid";
 import { cast } from "../src/game/systems/skills";
@@ -19,9 +23,11 @@ function finish(b: Battle) {
   return b.result!;
 }
 describe("資料與部署", () => {
-  it("12 名完整一星角色與各自技能", () => {
-    expect(characters).toHaveLength(12);
-    expect(new Set(characters.map((c) => c.skillId)).size).toBe(12);
+  it("32 名完整一星角色與各自技能", () => {
+    expect(characters).toHaveLength(32);
+    expect(new Set(characters.map((c) => c.skillId)).size).toBe(32);
+    for (const id of legacyCharacterIds)
+      expect(characters.some((c) => c.id === id)).toBe(true);
     for (const c of characters) {
       expect(c.starLevel).toBe(1);
       expect(c.maxHP).toBeGreaterThan(0);
@@ -132,9 +138,14 @@ describe("技能與傷害", () => {
       kind = skills[id].kind;
     if (kind === "empower") expect(u.empowered).toBe(true);
     else if (kind === "haste" || kind === "armor") expect(u.buff).toBe(kind);
-    else if (kind === "heal") expect(b.units[1].hp).toBeGreaterThan(50);
-    else if (kind === "shield" || kind === "ward")
+    else if (kind === "heal" || kind === "multiheal")
+      expect(b.units[1].hp).toBeGreaterThan(50);
+    else if (kind === "shield" || kind === "ward" || kind === "areaward")
       expect(u.shield).toBeGreaterThan(0);
+    else if (kind === "summon")
+      expect(b.units.some((u) => u.summon?.ownerId === "p")).toBe(true);
+    else if (kind === "energy")
+      expect(b.units[1].mana).toBeGreaterThan(b.units[1].data.startingMana);
     else
       expect(
         b.units.some((u) => u.team === "enemy" && u.hp < u.data.maxHP),

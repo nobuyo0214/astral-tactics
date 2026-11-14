@@ -37,31 +37,28 @@ export const rounds: RoundDefinition[] = [
   {
     name: "精英敵人 · 熾羽軍團",
     specialReward: 0,
-    enemies: lineup(["ember", "flame", "plume", "leaf", "grove"]),
+    enemies: lineup(["ember", "flame", "plume", "cinder", "grove"]),
   },
   {
     name: "普通敵人 · 群星集結",
     specialReward: 0,
-    enemies: lineup(["lumen", "bolt", "spark", "thunder", "grove"]),
+    enemies: lineup(["lumen", "bolt", "spark", "thunder", "comet"]),
   },
   {
     name: "強化敵人 · 年輪之誓",
     specialReward: 0,
-    enemies: lineup(["oak", "bolt", "spark", "thunder", "grove"], [2]),
+    enemies: lineup(["rime", "veil", "snow", "dew", "oak"], [2]),
   },
   {
     name: "精英敵人 · 裁決前夕",
     specialReward: 0,
-    enemies: lineup(
-      ["oak", "judge", "spark", "thunder", "grove", "astral"],
-      [2],
-    ),
+    enemies: lineup(["oak", "judge", "shade", "vessel", "wisp", "omen"], [2]),
   },
   {
     name: "強化敵人 · 破碎星門",
     specialReward: 0,
     enemies: lineup(
-      ["oak", "judge", "spark", "thunder", "grove", "astral"],
+      ["oak", "judge", "shade", "vessel", "wisp", "omen"],
       [2, 2],
     ),
   },
@@ -69,8 +66,8 @@ export const rounds: RoundDefinition[] = [
     name: "最終試煉 · 星環重鑄",
     specialReward: 0,
     enemies: lineup(
-      ["oak", "judge", "spark", "thunder", "grove", "astral", "lumen"],
-      [2, 2, 2, 1, 1, 1, 1],
+      ["oak", "judge", "shade", "vessel", "wisp", "omen", "lumen", "astral"],
+      [2, 2, 2, 1, 1, 1, 1, 1],
     ),
   },
 ];

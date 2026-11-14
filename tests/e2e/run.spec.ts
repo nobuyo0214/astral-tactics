@@ -96,7 +96,7 @@ for (const width of [1366, 1920])
     await expect(page.locator("#run-timer")).toHaveText("0.00 / 60.00");
     await page.locator("#run-home").click();
     await page.locator("#play").click();
-    await expect(page.locator("[data-char]")).toHaveCount(12);
+    await expect(page.locator("[data-char]")).toHaveCount(32);
     await expect(page.locator("[data-level]")).toHaveCount(3);
     await cell(page, 2, 4);
     await expect(page.locator("#counts")).toContainText("我方 1");

@@ -27,12 +27,14 @@ export class BoardScene extends Phaser.Scene {
   private ink!: Phaser.GameObjects.Graphics;
   private labels: Phaser.GameObjects.Text[] = [];
   private labelCursor = 0;
+  private visualKey = "";
   private hover: Cell | null = null;
   private down: { x: number; y: number; id?: string } | null = null;
   constructor(private bridge: BoardBridge) {
     super("battle");
   }
   create() {
+    this.drawBoard();
     this.ink = this.add.graphics();
     this.input.mouse?.disableContextMenu();
     this.input.on("pointermove", (p: Phaser.Input.Pointer) => {
@@ -71,6 +73,38 @@ export class BoardScene extends Phaser.Scene {
         this.bridge.bench(d.id);
     });
   }
+  private drawBoard() {
+    const grid = this.add.graphics(),
+      labels: Phaser.GameObjects.Text[] = [];
+    for (let y = 0; y < 8; y++)
+      for (let x = 0; x < 7; x++) {
+        const px = OX + x * TILE,
+          py = OY + y * TILE;
+        grid.fillStyle(y < 4 ? 0x242338 : 0x172f42, 0.92);
+        grid.fillRoundedRect(px + 2, py + 2, TILE - 4, TILE - 4, 7);
+        grid.lineStyle(1, 0x4a526e, 0.3);
+        grid.strokeRoundedRect(px + 2, py + 2, TILE - 4, TILE - 4, 7);
+        labels.push(
+          this.add
+            .text(px + 9, py + 9, `${String.fromCharCode(65 + x)}${y + 1}`, {
+              fontSize: 8,
+              fontFamily: "sans-serif",
+              color: "#77829d",
+            })
+            .setOrigin(0.5),
+        );
+      }
+    grid.lineStyle(2, 0xc8a771, 0.8);
+    grid.lineBetween(OX, OY + 4 * TILE, OX + 7 * TILE, OY + 4 * TILE);
+    // Bake 56 tiles and coordinate labels once instead of tessellating them per frame.
+    const background = this.add
+      .renderTexture(0, 0, WIDTH, HEIGHT)
+      .setOrigin(0, 0)
+      .setDepth(-1);
+    background.draw([grid, ...labels]);
+    grid.destroy();
+    labels.forEach((t) => t.destroy());
+  }
   private current(): (Placement | Unit)[] {
     return this.bridge.battle()?.units ?? this.bridge.placements();
   }
@@ -100,36 +134,49 @@ export class BoardScene extends Phaser.Scene {
   update(_time: number, delta: number) {
     this.bridge.update(delta / 1000);
     if (!this.ink) return;
+    const b = this.bridge.battle(),
+      current = this.current();
+    const key =
+      (b
+        ? `battle:${b.time}:${b.units.length}`
+        : current
+            .map((u) => `${u.id}:${u.characterId}:${u.starLevel}:${u.x}:${u.y}`)
+            .join("|")) +
+      `:${this.bridge.selected()}:${this.hover?.x}:${this.hover?.y}:${this.bridge.animations()}:${this.bridge.quality()}`;
+    if (key === this.visualKey) return;
+    this.visualKey = key;
     const g = this.ink;
     g.clear();
     this.labels.forEach((t) => t.setVisible(false));
     this.labelCursor = 0;
-    for (let y = 0; y < 8; y++)
-      for (let x = 0; x < 7; x++) {
-        const px = OX + x * TILE,
-          py = OY + y * TILE,
-          hover = this.hover?.x === x && this.hover.y === y;
-        g.fillStyle(
-          hover ? 0x414267 : y < 4 ? 0x242338 : 0x172f42,
-          hover ? 1 : 0.92,
-        );
-        g.fillRoundedRect(px + 2, py + 2, TILE - 4, TILE - 4, 7);
-        g.lineStyle(1, hover ? 0xe4c58a : 0x4a526e, hover ? 0.9 : 0.3);
-        g.strokeRoundedRect(px + 2, py + 2, TILE - 4, TILE - 4, 7);
-        this.text(
-          px + 9,
-          py + 9,
-          `${String.fromCharCode(65 + x)}${y + 1}`,
-          8,
-          "#77829d",
-        );
-      }
-    g.lineStyle(2, 0xc8a771, 0.8);
-    g.lineBetween(OX, OY + 4 * TILE, OX + 7 * TILE, OY + 4 * TILE);
-    const b = this.bridge.battle();
-    for (const u of this.current()) {
-      const data = effectiveCharacter(u.characterId, u.starLevel ?? 1),
-        live = "hp" in u ? u : null;
+    if (
+      this.hover &&
+      this.hover.x >= 0 &&
+      this.hover.x < 7 &&
+      this.hover.y >= 0 &&
+      this.hover.y < 8
+    ) {
+      g.fillStyle(0x79739c, 0.25);
+      g.fillRoundedRect(
+        OX + this.hover.x * TILE + 2,
+        OY + this.hover.y * TILE + 2,
+        TILE - 4,
+        TILE - 4,
+        7,
+      );
+      g.lineStyle(1, 0xe4c58a, 0.9);
+      g.strokeRoundedRect(
+        OX + this.hover.x * TILE + 2,
+        OY + this.hover.y * TILE + 2,
+        TILE - 4,
+        TILE - 4,
+        7,
+      );
+    }
+    for (const u of current) {
+      const live = "hp" in u ? u : null,
+        data =
+          live?.data ?? effectiveCharacter(u.characterId, u.starLevel ?? 1);
       let alpha = 1;
       if (live && live.hp <= 0) {
         const death = b?.events.find(
@@ -148,6 +195,16 @@ export class BoardScene extends Phaser.Scene {
       if (data.class === "守護者")
         g.strokeRoundedRect(px - 21, py - 21, 42, 42, 7);
       else g.strokeCircle(px, py, 21);
+      if (live?.statuses.length) {
+        const frozen = live.statuses.some((s) => s.id === "freeze"),
+          burning = live.statuses.some((s) => s.id === "burn");
+        g.lineStyle(
+          3,
+          frozen ? 0xa4e6ff : burning ? 0xff9266 : 0x91b8ee,
+          alpha * 0.8,
+        );
+        g.strokeCircle(px, py, 26);
+      }
       if (live && live.shield > 0) {
         g.lineStyle(2, 0x9be4ff, alpha * 0.8);
         g.strokeCircle(px, py, 25);
@@ -160,7 +217,14 @@ export class BoardScene extends Phaser.Scene {
         `#${data.color.toString(16).padStart(6, "0")}`,
       );
       this.labels[this.labelCursor - 1].setAlpha(alpha);
-      this.text(px, py + 17, "★".repeat(u.starLevel ?? 1) + " " + data.name, 8);
+      this.text(
+        px,
+        py + 17,
+        (live?.summon ? "靈體" : "★".repeat(u.starLevel ?? 1)) +
+          " " +
+          data.name,
+        8,
+      );
       this.labels[this.labelCursor - 1].setAlpha(alpha);
       const hp = live ? live.hp / data.maxHP : 1,
         mana = live
@@ -174,7 +238,7 @@ export class BoardScene extends Phaser.Scene {
       g.fillRect(px - 23, py + 31, 46 * mana, 2);
     }
     if (b && this.bridge.animations())
-      for (const e of b.events) {
+      for (const e of b.events.slice(this.bridge.quality() ? -48 : -16)) {
         const age = b.time - e.time;
         if (age > 0.8) continue;
         const target = b.units.find((u) => u.id === e.target),
@@ -189,6 +253,18 @@ export class BoardScene extends Phaser.Scene {
             px,
             py,
           );
+        }
+        if (["trait", "status", "summon"].includes(e.kind) && age < 0.55) {
+          g.lineStyle(2, source?.data.color ?? 0xe8c97f, 1 - age / 0.55);
+          g.strokeCircle(px, py, 15 + age * 30);
+          if (this.bridge.quality())
+            this.text(
+              px,
+              py - 38 - age * 15,
+              e.label ?? "",
+              10,
+              `#${(source?.data.color ?? 0xe8c97f).toString(16).padStart(6, "0")}`,
+            );
         }
         if (e.kind === "skill") {
           g.lineStyle(this.bridge.quality() ? 3 : 1, 0xc4a2ff, 1 - age / 0.8);
